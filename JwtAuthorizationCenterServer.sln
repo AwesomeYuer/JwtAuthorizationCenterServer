@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00", "00", "{C0E64028-2DD1-4603-B116-4964179E99B2}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommonUtilities.Shared", "CommonUtilities.Shared\CommonUtilities.Shared.shproj", "{7878DF3A-8418-4ACA-B415-300B81AFD792}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonUtilities.NET.Core.2.x", "CommonUtilities.NET.Core.2.x\CommonUtilities.NET.Core.2.x.csproj", "{558C221F-060B-489D-9394-F4F826019E05}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtAuthorizationCenterServer", "JwtAuthorizationCenterServer\JwtAuthorizationCenterServer.csproj", "{31EBD0AA-DD16-4D94-8183-0204B21CF797}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App1.WebApplication", "App1.WebApplication\App1.WebApplication.csproj", "{7EA0158B-E6A2-4910-8431-2D537961C71F}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CommonUtilities.Shared\CommonUtilities.Shared.projitems*{7878df3a-8418-4aca-b415-300b81afd792}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{558C221F-060B-489D-9394-F4F826019E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{558C221F-060B-489D-9394-F4F826019E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{558C221F-060B-489D-9394-F4F826019E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{558C221F-060B-489D-9394-F4F826019E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EBD0AA-DD16-4D94-8183-0204B21CF797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EBD0AA-DD16-4D94-8183-0204B21CF797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EBD0AA-DD16-4D94-8183-0204B21CF797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EBD0AA-DD16-4D94-8183-0204B21CF797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EA0158B-E6A2-4910-8431-2D537961C71F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EA0158B-E6A2-4910-8431-2D537961C71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EA0158B-E6A2-4910-8431-2D537961C71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EA0158B-E6A2-4910-8431-2D537961C71F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7878DF3A-8418-4ACA-B415-300B81AFD792} = {C0E64028-2DD1-4603-B116-4964179E99B2}
+		{558C221F-060B-489D-9394-F4F826019E05} = {C0E64028-2DD1-4603-B116-4964179E99B2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0668C13-3874-4362-97FA-D6F08DB3D352}
+	EndGlobalSection
+EndGlobal
