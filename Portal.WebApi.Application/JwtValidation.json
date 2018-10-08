@@ -1,0 +1,12 @@
+{
+  "TokenName": "Microshaoft-Authorization-Bearer",
+  "TokenCarrier": "Header",
+  "NeedValidIP": "false",
+  "ExpireInSeconds": "86400",
+  "Issuer": "aaa",
+  "Audiences": [
+    "app1",
+    "app2"
+  ],
+  "SecretKey": "0123456789ABCDEF"
+}
