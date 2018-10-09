@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\index1111111.html" />
+    <None Include="wwwroot\libs\jquery-ui\jquery-ui-1.12.1.css" />
+    <None Include="wwwroot\libs\jquery-ui\jquery-ui-1.12.1.js" />
+    <None Include="wwwroot\libs\jquery\jquery-3.3.1.js" />
+    <None Include="wwwroot\libs\jquery\jquery-3.3.1.min.js" />
+    <None Include="wwwroot\libs\jsdifflib\difflib.js" />
+    <None Include="wwwroot\libs\jsdifflib\diffview.css" />
+    <None Include="wwwroot\libs\jsdifflib\diffview.js" />
+    <None Include="wwwroot\libs\knockout\knockout-3.4.2.debug.js" />
+    <None Include="wwwroot\libs\knockout\knockout-3.4.2.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

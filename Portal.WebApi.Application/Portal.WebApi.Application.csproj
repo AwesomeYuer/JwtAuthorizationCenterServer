@@ -4,6 +4,18 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="wwwroot\libs\**" />
+    <Content Remove="wwwroot\libs\**" />
+    <EmbeddedResource Remove="wwwroot\libs\**" />
+    <None Remove="wwwroot\libs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\index.html" />
+    <Content Remove="wwwroot\index1111111.html" />
+  </ItemGroup>
+
   <!--<ItemGroup>
     <Content Remove="wwwroot\libs\jquery-ui\jquery-ui-1.12.1.css" />
     <Content Remove="wwwroot\libs\jquery-ui\jquery-ui-1.12.1.js" />
@@ -24,6 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
 
@@ -51,6 +64,7 @@
 
   <ItemGroup>
     <Folder Include="CompositionPlugins\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

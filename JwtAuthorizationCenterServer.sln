@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.WebApi.Application",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSQL.StoreProcedureWebApiExecutor.Plugin", "StoreProcedureWebApiExecutorsPlugins\MsSQL.StoreProcedureWebApiExecutor.Plugin\MsSQL.StoreProcedureWebApiExecutor.Plugin.csproj", "{05BD2285-370D-448A-936B-54589BE8B79E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.WebMVC.Application", "Portal.WebMVC.Application\Portal.WebMVC.Application.csproj", "{8AAC2271-35B9-4B67-997F-5CAC0BD41394}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CommonUtilities.Shared\CommonUtilities.Shared.projitems*{7878df3a-8418-4aca-b415-300b81afd792}*SharedItemsImports = 13
@@ -46,6 +48,10 @@ Global
 		{05BD2285-370D-448A-936B-54589BE8B79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05BD2285-370D-448A-936B-54589BE8B79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05BD2285-370D-448A-936B-54589BE8B79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AAC2271-35B9-4B67-997F-5CAC0BD41394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AAC2271-35B9-4B67-997F-5CAC0BD41394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AAC2271-35B9-4B67-997F-5CAC0BD41394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AAC2271-35B9-4B67-997F-5CAC0BD41394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
