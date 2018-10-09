@@ -15,7 +15,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000/api/test2/objects?{searchobjectname:\"aaa\"}"
+      //"applicationUrl": "http://localhost:5000/api/test2/objects?{searchobjectname:\"aaa\"}"
+      "applicationUrl": "http://localhost:5000"
     },
     "WebApplication1": {
       "commandName": "Project",

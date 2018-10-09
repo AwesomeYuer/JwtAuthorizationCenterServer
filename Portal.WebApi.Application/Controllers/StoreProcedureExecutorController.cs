@@ -20,44 +20,76 @@ namespace Microshaoft.WebApi.Controllers
         {
         }
 
-        public override ActionResult<JToken> ProcessActionRequest([FromRoute] string connectionID, [FromRoute] string storeProcedureName, [ModelBinder(typeof(JTokenModelBinder))] JToken parameters = null, [FromRoute] string resultPathSegment1 = null, [FromRoute] string resultPathSegment2 = null, [FromRoute] string resultPathSegment3 = null, [FromRoute] string resultPathSegment4 = null, [FromRoute] string resultPathSegment5 = null, [FromRoute] string resultPathSegment6 = null)
-        {
-            return
-                new ForbidResult();
-        }
-
 
         [Authorize]
 
         [BearerTokenBasedAuthorizeWebApiFilter]
 
-        [HttpDelete]
-        [HttpGet]
-        [HttpHead]
-        [HttpOptions]
-        [HttpPatch]
-        [HttpPost]
-        [HttpPut]
-        [
-            Route
-                (
-                    "test2/"
-                        + "{storeProcedureName}/"
-                )
-        ]
-        public ActionResult<JToken> ProcessActionRequest11
+        //[
+        //Route
+        //    (
+        //        "{connectionID:regex(^(test))?}/"
+        //        + "{storeProcedureName}/"
+        //        + "{resultPathSegment1?}/"
+        //        + "{resultPathSegment2?}/"
+        //        + "{resultPathSegment3?}/"
+        //        + "{resultPathSegment4?}/"
+        //        + "{resultPathSegment5?}/"
+        //        + "{resultPathSegment6?}"
+        //    )
+        //]
+
+        public override ActionResult<JToken> ProcessActionRequest
+             (
+                                //[FromRoute]
+                                string connectionID //= "mssql"
+                                ,// [FromRoute]
+                                    string storeProcedureName
+                                , //[ModelBinder(typeof(JTokenModelBinder))]
+                                    JToken parameters = null
+                                , //[FromRoute]
+                                    string resultPathSegment1 = null
+                                , //[FromRoute]
+                                    string resultPathSegment2 = null
+                                , //[FromRoute]
+                                    string resultPathSegment3 = null
+                                , //[FromRoute]
+                                    string resultPathSegment4 = null
+                                , //[FromRoute]
+                                    string resultPathSegment5 = null
+                                , //[FromRoute]
+                                    string resultPathSegment6 = null
+                            )
+        {
+            return
+                //new ForbidResult();
+                ProcessActionRequest
+                    (
+                        connectionID
+                        , storeProcedureName
+                        , parameters
+                    );
+        }
+        private ActionResult<JToken> ProcessActionRequest
                         (
                             [FromRoute]
+                                string connectionID
+                            , [FromRoute]
                                 string storeProcedureName
                             , [ModelBinder(typeof(JTokenModelBinder))]
                                 JToken parameters = null
                         )
         {
 
-            var jj = new JObject();
-            jj.Add
+           
+
+            var jsonObject = ((JObject)parameters);
+
+
+           
+            jsonObject.Add
                     (
-                        "User"
+                        "UserName"
                         , HttpContext
                             .User
                             .Identity
@@ -74,13 +106,12 @@ namespace Microshaoft.WebApi.Controllers
                             )
                 )
             {
-                jj.Add
+                jsonObject.Add
                     (
                         "ExtensionClaims"
                         , claimValue
                     );
             }
-         
 
 
             JToken result = null;
@@ -88,9 +119,11 @@ namespace Microshaoft.WebApi.Controllers
                     _service
                         .Process
                             (
-                                "mssql2"
-                                , "objects"
-                                , parameters
+                                //"mssql2"
+                                connectionID
+                                , storeProcedureName
+                                //, "objects"
+                                , jsonObject
                                 , (reader, fieldType, fieldName, rowIndex, columnIndex) =>
                                 {
                                     JProperty field = null;
@@ -98,7 +131,7 @@ namespace Microshaoft.WebApi.Controllers
                                     {
                                         if (fieldName.Contains("Json", System.StringComparison.OrdinalIgnoreCase))
                                         {
-                                            fieldName = fieldName.Replace("json", "", System.StringComparison.OrdinalIgnoreCase);
+                                            //fieldName = fieldName.Replace("json", "", System.StringComparison.OrdinalIgnoreCase);
                                             field = new JProperty
                                                             (
                                                                 fieldName

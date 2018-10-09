@@ -16,9 +16,9 @@
       ]
     },
     {
-      "ConnectionID": "mssql2",
+      "ConnectionID": "aaaa",
       "DataBaseType": "mssql",
-      "ConnectionString": "Initial Catalog=test;Data Source=localhost;User=sa;Password=!@#123QWE",
+      "ConnectionString": "Initial Catalog=eip_portal;Data Source=localhost;User=sa;Password=!@#123QWE",
       "WhiteList": [
         {
           "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get",
@@ -26,8 +26,14 @@
           "AllowedHttpMethods": "All"
         },
         {
-          "StoreProcedureName": "zsp_GetObjectTextHistory",
-          "AllowedHttpMethods": "All"
+          "StoreProcedureName": "usp_UsersHome_Get",
+          "StoreProcedureAlias": "userget",
+          "AllowedHttpMethods": "Get"
+        },
+        {
+          "StoreProcedureName": "usp_UsersHome_Update",
+          "StoreProcedureAlias": "userupdate",
+          "AllowedHttpMethods": "Post"
         }
       ]
     },
