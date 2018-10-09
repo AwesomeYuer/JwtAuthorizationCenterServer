@@ -28,6 +28,23 @@
         }
         public void ConfigureServices(IServiceCollection services)
         {
+            // 允许跨域
+            services.AddCors(options =>
+                options.AddPolicy(
+                    "AllowAllOrigins",
+                    builder => builder
+                        //.WithOrigins("127.0.0.1:52184")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin()
+                        .AllowCredentials()
+                        // 允许浏览器添加的 http request header
+                        .WithExposedHeaders(
+                                                //"Microshaoft-Authorization-Bearer",
+                                                "*"
+                                           )
+                        )
+            );
 
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services
@@ -45,50 +62,53 @@
                         , StoreProceduresExecuteService
                     >
                     ();
-            services
-                .Add
-                    (
-                        ServiceDescriptor
-                            .Transient<ICorsService, WildcardCorsService>()
-                    );
-            services
-                .AddCors
-                    (
-                        (options) =>
-                        {
-                            options
-                                .AddPolicy
-                                    (
-                                        "SPE"
-                                        , (builder) =>
-                                        {
-                                            builder
-                                                .WithOrigins
-                                                    (
-                                                        "*.microshaoft.com"
-                                                    );
-                                        }
-                                    );
-                            // BEGIN02
-                            options
-                                .AddPolicy
-                                    (
-                                        "AllowAllOrigins"
-                                        ,
-                                        (builder) =>
-                                        {
-                                            builder.AllowAnyOrigin();
-                                        }
-                                    );
 
-                        }
-                  );
-            services.AddResponseCaching();
+            //services
+            //    .Add
+            //        (
+            //            ServiceDescriptor
+            //                .Transient<ICorsService, WildcardCorsService>()
+            //        );
+
+            //services
+            //    .AddCors
+            //        (
+            //            (options) =>
+            //            {
+            //                options
+            //                    .AddPolicy
+            //                        (
+            //                            "SPE"
+            //                            , (builder) =>
+            //                            {
+            //                                builder
+            //                                    .WithOrigins
+            //                                        (
+            //                                            "*.microshaoft.com"
+            //                                        );
+            //                            }
+            //                        );
+            //                // BEGIN02
+            //                options
+            //                    .AddPolicy
+            //                        (
+            //                            "AllowAllOrigins"
+            //                            ,
+            //                            (builder) =>
+            //                            {
+            //                                builder.AllowAnyOrigin();
+            //                            }
+            //                        );
+
+            //            }
+            //      );
+            //services.AddResponseCaching();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors();
+            // 允许的跨域策略
+            app.UseCors("AllowAllOrigins");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -128,11 +148,12 @@
                         (
                             new StaticFileOptions()
                             {
-                                  FileProvider = new PhysicalFileProvider
+                                FileProvider = new PhysicalFileProvider
                                                         (
                                                             wwwroot
                                                         )
-                                , RequestPath = ""
+                                ,
+                                RequestPath = ""
                             }
                         );
             }
@@ -148,7 +169,7 @@
             //        new string[] { "Accept-Encoding" };
             //    await next();
             //});
-            app.UseResponseCaching();
+            //app.UseResponseCaching();
         }
         private static IEnumerable<string> GetExistsPaths(string configurationJsonFile, string sectionName)
         {
@@ -156,7 +177,7 @@
                         new ConfigurationBuilder()
                                 .AddJsonFile(configurationJsonFile);
             var configuration = configurationBuilder.Build();
-            
+
             var executingDirectory =
                         Path
                             .GetDirectoryName

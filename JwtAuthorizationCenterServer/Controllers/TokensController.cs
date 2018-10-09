@@ -8,10 +8,12 @@
     using Newtonsoft.Json.Linq;
     using System.Security.Claims;
 
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors]
+    //启用跨域，指定允许的跨域策略
+    [EnableCors("AllowAllOrigins")]
+
     public class TokensController : ControllerBase
     {
         // GET api/values
