@@ -58,9 +58,9 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" />
-  </ItemGroup>
+  <!--<ItemGroup>
+    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.5" />
+  </ItemGroup>-->
 
   <ItemGroup>
     <Folder Include="CompositionPlugins\" />
