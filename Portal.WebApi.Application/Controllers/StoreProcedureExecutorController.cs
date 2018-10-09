@@ -8,6 +8,7 @@ namespace Microshaoft.WebApi.Controllers
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json.Linq;
+    using System;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -19,26 +20,8 @@ namespace Microshaoft.WebApi.Controllers
                 : base(service)
         {
         }
-
-
         [Authorize]
-
         [BearerTokenBasedAuthorizeWebApiFilter]
-
-        //[
-        //Route
-        //    (
-        //        "{connectionID:regex(^(test))?}/"
-        //        + "{storeProcedureName}/"
-        //        + "{resultPathSegment1?}/"
-        //        + "{resultPathSegment2?}/"
-        //        + "{resultPathSegment3?}/"
-        //        + "{resultPathSegment4?}/"
-        //        + "{resultPathSegment5?}/"
-        //        + "{resultPathSegment6?}"
-        //    )
-        //]
-
         public override ActionResult<JToken> ProcessActionRequest
              (
                                 //[FromRoute]
@@ -62,7 +45,6 @@ namespace Microshaoft.WebApi.Controllers
                             )
         {
             return
-                //new ForbidResult();
                 ProcessActionRequest
                     (
                         connectionID
@@ -80,21 +62,16 @@ namespace Microshaoft.WebApi.Controllers
                                 JToken parameters = null
                         )
         {
-
-           
-
             var jsonObject = ((JObject)parameters);
-
-
-           
-            jsonObject.Add
-                    (
-                        "UserName"
-                        , HttpContext
-                            .User
-                            .Identity
-                            .Name
-                    );
+            jsonObject
+                    .Add
+                        (
+                            "UserName"
+                            , HttpContext
+                                .User
+                                .Identity
+                                .Name
+                        );
             if
                 (
                     HttpContext
@@ -106,36 +83,34 @@ namespace Microshaoft.WebApi.Controllers
                             )
                 )
             {
-                jsonObject.Add
-                    (
-                        "ExtensionClaims"
-                        , claimValue
-                    );
+                jsonObject
+                        .Add
+                            (
+                                "ExtensionClaims"
+                                , claimValue
+                            );
             }
-
-
             JToken result = null;
             (int StatusCode, JToken Result) r =
                     _service
                         .Process
                             (
-                                //"mssql2"
                                 connectionID
                                 , storeProcedureName
-                                //, "objects"
                                 , jsonObject
                                 , (reader, fieldType, fieldName, rowIndex, columnIndex) =>
                                 {
                                     JProperty field = null;
                                     if (fieldType == typeof(string))
                                     {
-                                        if (fieldName.Contains("Json", System.StringComparison.OrdinalIgnoreCase))
+                                        if (fieldName.Contains("Json", StringComparison.OrdinalIgnoreCase))
                                         {
                                             //fieldName = fieldName.Replace("json", "", System.StringComparison.OrdinalIgnoreCase);
+                                            var json = reader.GetString(columnIndex);
                                             field = new JProperty
                                                             (
                                                                 fieldName
-                                                                , JObject.Parse(reader.GetString(columnIndex))
+                                                                , JObject.Parse(json)
                                                             );
                                         }
                                     }
