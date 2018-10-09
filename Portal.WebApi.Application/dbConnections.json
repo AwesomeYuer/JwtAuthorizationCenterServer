@@ -20,11 +20,11 @@
       "DataBaseType": "mssql",
       "ConnectionString": "Initial Catalog=eip_portal;Data Source=localhost;User=sa;Password=!@#123QWE",
       "WhiteList": [
-        {
-          "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get",
-          "StoreProcedureAlias": "Objects",
-          "AllowedHttpMethods": "All"
-        },
+        //{
+        //  "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get",
+        //  "StoreProcedureAlias": "Objects",
+        //  "AllowedHttpMethods": "All"
+        //},
         {
           "StoreProcedureName": "usp_UsersHome_Get",
           "StoreProcedureAlias": "userget",
