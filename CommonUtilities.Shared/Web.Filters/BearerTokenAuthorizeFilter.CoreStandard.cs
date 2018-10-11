@@ -12,8 +12,8 @@ namespace Microshaoft.Web
     [Flags]
     public enum TokenStoreFlags : ushort
     {
-        Header      = 0b0000_00001
-        , Cookie    = 0b0000_00010
+        Header = 0b0000_00001
+        , Cookie = 0b0000_00010
     }
 
     public class BearerTokenBasedAuthorizeWebApiFilter
@@ -29,14 +29,6 @@ namespace Microshaoft.Web
             get;
         }
 
-        private string _jwtName;
-        private TokenStoreFlags _jwtCarrier;
-        private string _jwtIssuer;
-        private string[] _jwtAudiences;
-        private bool _jwtNeedValidIP = false;
-        private string _jwtSecretKey;
-        private int _jwtExpireInSeconds = 0;
-
         public BearerTokenBasedAuthorizeWebApiFilter()
         {
             Initialize();
@@ -44,22 +36,20 @@ namespace Microshaoft.Web
         public virtual void Initialize()
         {
             InstanceID = Interlocked.Increment(ref InstancesSeed);
-            //允许继承覆盖, 构造函数
-            LoadConfiguration();
         }
-        public virtual void LoadConfiguration
-                                (
-                                    string jwtValidationJsonFile = "JwtValidation.json"
-                                )
+
+        public virtual void OnActionExecuting(ActionExecutingContext context)
         {
-            var configurationBuilder =
-                        new ConfigurationBuilder()
-                                .AddJsonFile(jwtValidationJsonFile);
-            var configuration = configurationBuilder.Build();
-            _jwtName = configuration
+            IConfiguration configuration = (IConfiguration)context.HttpContext.RequestServices.GetService(typeof(IConfiguration));
+
+            var request = context.HttpContext.Request;
+            StringValues token = string.Empty;
+            var ok = false;
+
+            var jwtName = configuration
                             .GetSection("TokenName")
                             .Value;
-            _jwtCarrier = Enum
+            var jwtCarrier = Enum
                             .Parse<TokenStoreFlags>
                                 (
                                     configuration
@@ -67,10 +57,10 @@ namespace Microshaoft.Web
                                         .Value
                                     , true
                                 );
-            _jwtIssuer = configuration
+            var jwtIssuer = configuration
                                 .GetSection("Issuer")
                                 .Value;
-            _jwtAudiences = configuration
+            var jwtAudiences = configuration
                                 .GetSection("Audiences")
                                 .AsEnumerable()
                                 .Select
@@ -82,97 +72,84 @@ namespace Microshaoft.Web
                                         }
                                     )
                                 .ToArray();
-            _jwtNeedValidIP = bool
+            var jwtNeedValidIP = bool
                                 .Parse
                                     (
                                         configuration
                                             .GetSection("NeedValidIP")
                                             .Value
                                     );
-            _jwtSecretKey = configuration
+            var jwtSecretKey = configuration
                                 .GetSection("SecretKey")
                                 .Value;
-            _jwtExpireInSeconds = int
+            var jwtExpireInSeconds = int
                                     .Parse
                                         (
                                             configuration
                                                 .GetSection("ExpireInSeconds")
                                                 .Value
                                         );
-        }
 
-        public virtual void OnActionExecuting(ActionExecutingContext context)
-        {
-            var request = context.HttpContext.Request;
-            StringValues token = string.Empty;
-            var ok = false;
-            if (_jwtCarrier.HasFlag(TokenStoreFlags.Header))
-            {
-                ok = request.Headers.TryGetValue(_jwtName, out token);
-            }
-            else if (_jwtCarrier.HasFlag(TokenStoreFlags.Cookie))
-            {
-                ok = request.Cookies.TryGetValue(_jwtName, out var t);
-                token = t;
-            }
+            token = context.HttpContext.Items[jwtName].ToString();
+
             if (ok)
             {
                 ok = JwtTokenHelper
                             .TryValidateToken
                                 (
-                                    _jwtSecretKey
+                                    jwtSecretKey
                                     , token
                                     , out var validatedPlainToken
                                     , out var claimsPrincipal
                                 );
                 if (ok)
                 {
-                    if (_jwtExpireInSeconds > 0)
+                    if (jwtExpireInSeconds > 0)
                     {
                         var iat = claimsPrincipal
                                         .GetIssuedAtLocalTime();
                         var diffNowSeconds = DateTimeHelper
                                                 .SecondsDiffNow(iat.Value);
                         ok =
-                            (
-                                (
-                                    diffNowSeconds
-                                    >=
-                                    0
-                                )
-                                &&
-                                (
-                                    diffNowSeconds
-                                    <=
-                                    _jwtExpireInSeconds
-                                )
-                            );
+                                            (
+                                                (
+                                                    diffNowSeconds
+                                                    >=
+                                                    0
+                                                )
+                                                &&
+                                                (
+                                                    diffNowSeconds
+                                                    <=
+                                                    jwtExpireInSeconds
+                                                )
+                                            );
                     }
                 }
                 if (ok)
                 {
-                    ok = (string.Compare(validatedPlainToken.Issuer, _jwtIssuer, true) == 0);
+                    ok = (string.Compare(validatedPlainToken.Issuer, jwtIssuer, true) == 0);
                 }
                 if (ok)
                 {
-                   ok = _jwtAudiences
-                            .Any
-                                (
-                                    (x) => 
-                                    {
-                                        return
-                                            validatedPlainToken
-                                                    .Audiences
-                                                    .Any
-                                                        (
-                                                            (xx) =>
-                                                            {
-                                                                return
-                                                                    (xx == x);
-                                                            }
-                                                        );
-                                    }
-                                );
+                    ok = jwtAudiences
+                             .Any
+                                 (
+                                     (x) =>
+                                     {
+                                         return
+                                             validatedPlainToken
+                                                     .Audiences
+                                                     .Any
+                                                         (
+                                                             (xx) =>
+                                                             {
+                                                                 return
+                                                                     (xx == x);
+                                                             }
+                                                         );
+                                     }
+                                 );
                 }
                 if (ok)
                 {
@@ -182,9 +159,9 @@ namespace Microshaoft.Web
                 }
                 if (ok)
                 {
-                    if (_jwtNeedValidIP)
+                    if (jwtNeedValidIP)
                     {
-                        var requestIpAddress = 
+                        var requestIpAddress =
                                             context
                                                 .HttpContext
                                                 .Connection
@@ -206,7 +183,7 @@ namespace Microshaoft.Web
         }
         public virtual void OnActionExecuted(ActionExecutedContext context)
         {
-            
+
         }
     }
 }

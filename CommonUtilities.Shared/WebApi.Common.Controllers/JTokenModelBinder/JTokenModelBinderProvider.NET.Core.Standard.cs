@@ -4,6 +4,7 @@ namespace Microshaoft.WebApi.ModelBinders
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -92,10 +93,10 @@ namespace Microshaoft.WebApi.ModelBinders
                 }
             }
             else
-                //if 
-                //(
-                //    string.Compare(request.Method, "get", true) == 0
-                //)
+            //if 
+            //(
+            //    string.Compare(request.Method, "get", true) == 0
+            //)
             {
                 RequestBodyProcess();
                 if (jToken == null)
@@ -103,6 +104,27 @@ namespace Microshaoft.WebApi.ModelBinders
                     RequestHeaderProcess();
                 }
             }
+
+
+
+            StringValues token = string.Empty;
+            IConfiguration configuration = (IConfiguration)request.HttpContext.RequestServices.GetService(typeof(IConfiguration));
+            var jwtName = configuration.GetSection("TokenName").Value;
+
+            if (request.Headers.TryGetValue(jwtName, out token))
+            {
+
+            }
+            //else if (request.Cookies.TryGetValue(jwtName, out var t))
+            //{
+            //    token = t;
+            //}
+            else
+            {
+                token = jToken[jwtName].ToString();
+            }
+            request.HttpContext.Items.Add(jwtName, token);
+
             bindingContext
                     .Result =
                             ModelBindingResult
@@ -112,7 +134,7 @@ namespace Microshaoft.WebApi.ModelBinders
                                         );
         }
     }
-    public class JTokenModelBinderProvider 
+    public class JTokenModelBinderProvider
                             : IModelBinderProvider
                                 , IModelBinder
     {

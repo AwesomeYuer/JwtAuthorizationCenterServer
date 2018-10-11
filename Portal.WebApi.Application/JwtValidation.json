@@ -1,5 +1,5 @@
 {
-  "TokenName": "Microshaoft-Authorization-Bearer",
+  "TokenName": "xJwtToken",
   "TokenCarrier": "Header",
   "NeedValidIP": "false",
   "ExpireInSeconds": "86400",

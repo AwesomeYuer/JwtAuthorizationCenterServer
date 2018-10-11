@@ -9,12 +9,12 @@
     using System.Linq;
     using System.Runtime.InteropServices;
 
- //xcopy ..\..\StoreProcedureWebApiExecutorsPlugins\MsSQL.StoreProcedureWebApiExecutor.Plugin\bin\Debug\netcoreapp2.1\*.plugin.* $(TargetDir) CompositionPlugins\ /Y
- //xcopy ..\..\StoreProcedureWebApiExecutorsPlugins\MySQL.StoreProcedureWebApiExecutor.Plugin\bin\Debug\netcoreapp2.1\*.plugin.* $(TargetDir) CompositionPlugins\ /Y
+    //xcopy ..\..\StoreProcedureWebApiExecutorsPlugins\MsSQL.StoreProcedureWebApiExecutor.Plugin\bin\Debug\netcoreapp2.1\*.plugin.* $(TargetDir) CompositionPlugins\ /Y
+    //xcopy ..\..\StoreProcedureWebApiExecutorsPlugins\MySQL.StoreProcedureWebApiExecutor.Plugin\bin\Debug\netcoreapp2.1\*.plugin.* $(TargetDir) CompositionPlugins\ /Y
 
 
     public class Program
-    { 
+    {
         public static void Main(string[] args)
         {
             OSPlatform OSPlatform
@@ -70,6 +70,7 @@
                                     , optional: false
                                     , reloadOnChange: true
                                 )
+                            .AddJsonFile("JwtValidation.json", false, true)
                             .Build();
             return
                 WebHost
