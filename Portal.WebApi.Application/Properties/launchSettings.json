@@ -1,7 +1,7 @@
 {
   "iisSettings": {
     "windowsAuthentication": true,
-    "anonymousAuthentication": true, // 浏览器跨域请求时允许 optinos 协商
+    "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:5000",
       "sslPort": 0
@@ -12,20 +12,10 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      //"launchUrl": "api/aaaa/userget",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"
-    },
-    //"WebApplication1": {
-    //  "commandName": "Project",
-    //  "launchBrowser": true,
-    //  "launchUrl": "/api/aaaa/userget",
-    //  "environmentVariables": {
-    //    "ASPNETCORE_ENVIRONMENT": "Development"
-    //  },
-    //  "applicationUrl": "http://localhost:5000"
-    //}
+    }
   }
 }

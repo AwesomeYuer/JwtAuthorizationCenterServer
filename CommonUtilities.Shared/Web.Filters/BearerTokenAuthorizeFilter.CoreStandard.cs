@@ -90,18 +90,23 @@ namespace Microshaoft.Web
                                                 .Value
                                         );
 
-            token = context.HttpContext.Items[jwtName].ToString();
+
+            if (context.HttpContext.Items.TryGetValue(jwtName, out object value))
+            {
+                token = value.ToString();
+                ok = true;
+            }
 
             if (ok)
             {
                 ok = JwtTokenHelper
-                            .TryValidateToken
-                                (
-                                    jwtSecretKey
-                                    , token
-                                    , out var validatedPlainToken
-                                    , out var claimsPrincipal
-                                );
+                        .TryValidateToken
+                            (
+                                jwtSecretKey
+                                , token
+                                , out var validatedPlainToken
+                                , out var claimsPrincipal
+                            );
                 if (ok)
                 {
                     if (jwtExpireInSeconds > 0)

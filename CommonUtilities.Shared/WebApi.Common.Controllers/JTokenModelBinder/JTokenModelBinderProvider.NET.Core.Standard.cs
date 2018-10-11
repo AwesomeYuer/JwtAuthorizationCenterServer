@@ -21,6 +21,7 @@ namespace Microshaoft.WebApi.ModelBinders
             var request = bindingContext
                                     .HttpContext
                                     .Request;
+
             JToken jToken = null;
             async void RequestBodyProcess()
             {
@@ -81,49 +82,92 @@ namespace Microshaoft.WebApi.ModelBinders
                     jToken = request.Query.ToJToken();
                 }
             }
-            if
-                (
-                    string.Compare(request.Method, "get", true) == 0
-                )
+
+            // 取 jwtToken 优先级顺序：Header → QueryString → Body
+
+            StringValues jwtToken = string.Empty;
+            IConfiguration configuration = (IConfiguration)request.HttpContext.RequestServices.GetService(typeof(IConfiguration));
+            string jwtName = string.Empty;
+
+            RequestHeaderProcess();
+            if (jToken != null && jToken[jwtName] != null)
             {
-                RequestHeaderProcess();
-                if (jToken == null)
-                {
-                    RequestBodyProcess();
-                }
+                jwtName = configuration.GetSection("TokenName").Value;
+                jwtToken = jToken[jwtName].ToString();
             }
             else
-            //if 
-            //(
-            //    string.Compare(request.Method, "get", true) == 0
-            //)
             {
                 RequestBodyProcess();
-                if (jToken == null)
+                if (jToken != null && jToken[jwtName] != null)
                 {
-                    RequestHeaderProcess();
+                    jwtName = configuration.GetSection("TokenName").Value;
+                    jwtToken = jToken[jwtName].ToString();
                 }
             }
 
+            //var jwtName = configuration.GetSection("TokenName").Value;
 
-
-            StringValues token = string.Empty;
-            IConfiguration configuration = (IConfiguration)request.HttpContext.RequestServices.GetService(typeof(IConfiguration));
-            var jwtName = configuration.GetSection("TokenName").Value;
-
-            if (request.Headers.TryGetValue(jwtName, out token))
-            {
-
-            }
-            //else if (request.Cookies.TryGetValue(jwtName, out var t))
+            //if (jToken != null)
             //{
-            //    token = t;
+            //    token = jToken[jwtName].ToString();
             //}
-            else
-            {
-                token = jToken[jwtName].ToString();
-            }
-            request.HttpContext.Items.Add(jwtName, token);
+
+
+
+
+            //if
+            //    (
+            //        string.Compare(request.Method, "get", true) == 0
+            //    )
+            //{
+            //    RequestHeaderProcess();
+            //    if (jToken == null)
+            //    {
+            //        RequestBodyProcess();
+            //    }
+            //}
+            //if
+            //if
+            //    (
+            //        string.Compare(request.Method, "post", true) == 0
+            //    )
+            //{
+            //    RequestBodyProcess();
+            //    if (token == string.Empty)
+            //    {
+            //        token = jToken[jwtName].ToString();
+            //    }
+            //    if (jToken == null)
+            //    {
+            //        RequestHeaderProcess();
+            //    }
+            //}
+
+
+
+
+            //try
+            //{
+
+
+            //if (request.Headers.TryGetValue(jwtName, out token))
+            //{
+
+            //}
+            ////else if (request.Cookies.TryGetValue(jwtName, out var t))
+            ////{
+            ////    token = t;
+            ////}
+            //else
+            //{
+            //    token = jToken[jwtName].ToString();
+            //}
+            request.HttpContext.Items.Add(jwtName, jwtToken);
+            //}
+            //catch
+            //{
+
+            //}
 
             bindingContext
                     .Result =

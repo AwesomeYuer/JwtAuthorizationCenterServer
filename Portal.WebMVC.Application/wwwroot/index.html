@@ -8,11 +8,11 @@
 
 
     <div>
-        <button onclick="Login();" style="width:200px;height:50px;margin:20px;">嗅探</button>
+        <button onclick="Login();" style="width:200px;height:50px;margin:20px;display:inline-block;">嗅探 3A 认证中心</button>
     </div>
 
     <div>
-        <button onclick="GetJwtToken();" style="width:200px;height:50px;margin:20px;">获取 jwt Token</button>
+        <button onclick="GetJwtToken();" style="width:200px;height:50px;margin:20px;display:inline-block;">获取 jwt Token</button>
     </div>
 
     <div>
@@ -21,34 +21,64 @@
     </div>
 
     <div>
-        <button onclick="GetUserHomeInfo();" style="width:200px;height:50px;margin:20px;">获取用户 Home 页数据</button>
+        <button onclick="Login2();" style="width:200px;height:50px;margin:20px;display:inline-block;">嗅探 WebApi 服务器</button>
     </div>
 
-    <div id="usershomeconfig">
+    <div>
+        <button onclick="GetUserHomeInfo1();" style="width:400px;height:50px;margin:20px;display:inline-block;">获取用户 Home 页数据(GET：token 放在 header 中[xJwtToken])</button>
+    </div>
+
+    <div id="usershomeconfig1">
 
     </div>
 
-    <script src="libs/jquery/jquery-3.3.1.js"></script>
+    <div>
+        <button onclick="GetUserHomeInfo2();" style="width:600px;height:50px;margin:20px;display:inline-block;">获取用户 Home 页数据(GET：token 放在 queryString 中[xJwtToken],注意数据库参数不可有同名的)</button>
+    </div>
 
+    <div id="usershomeconfig2">
+
+    </div>
+
+    <div>
+        <button onclick="GetUserHomeInfo4();" style="width:600px;height:50px;margin:20px;display:inline-block;">获取用户 Home 页数据(POST：token 放在 header 中[xJwtToken],用户数据放在 BODY 中,注意数据库参数不可有同名的)</button>
+    </div>
+
+    <div id="usershomeconfig4">
+
+    </div>
+
+    <div>
+        <button onclick="GetUserHomeInfo3();" style="width:600px;height:50px;margin:20px;display:inline-block;">获取用户 Home 页数据(POST：token 放在 queryString 中[xJwtToken],用户数据放在 BODY 中,注意数据库参数不可有同名的)</button>
+    </div>
+
+    <div id="usershomeconfig3">
+
+    </div>
+
+    <!--<script src="libs/jquery/jquery-3.3.1.js"></script>-->
+    <script src="libs/jquery/jquery-1.12.4.js"></script>
     <script>
+        // 保存token
+        var jwttoken = '';
+        var userName = '';
+        var urlDomain = 'http://127.0.0.1';
+
+        // 嗅探 3A 认证中心
         function Login() {
 
             var script = document.createElement('script');
             script.onload = function () {
                 alert("Script loaded and ready");
             };
-            script.src = "http://127.0.0.1:52184/";
+            script.src = urlDomain + ":52184/";
             document.getElementsByTagName('head')[0].appendChild(script);
 
         }
-
-        // 保存token
-        let jwttoken = '';
-        let userName = '';
-
+        // 获取 jwt Token
         function GetJwtToken() {
 
-            let jwtAuthorizationCenterServerUrl = 'http://127.0.0.1:52184/api/Tokens';
+            var jwtAuthorizationCenterServerUrl = urlDomain + ':52184/api/Tokens';
 
             $.ajax({
                 type: "GET",
@@ -72,10 +102,21 @@
             });
         }
 
+        // 嗅探 WebApi 服务器
+        function Login2() {
 
-        function GetUserHomeInfo() {
+            var script = document.createElement('script');
+            script.onload = function () {
+                alert("Script loaded and ready");
+            };
+            script.src = urlDomain + ":5000/";
+            document.getElementsByTagName('head')[0].appendChild(script);
+
+        }
+        // 获取用户 Home 页数据(GET：token 放在 header 中[xJwtToken])
+        function GetUserHomeInfo1() {
             // 也跨域了
-            let portalUrl = 'http://127.0.0.1:5000/api/StoreProcedureExecutor/aaaa/userget';
+            var portalUrl = urlDomain + ':5000/api/StoreProcedureExecutor/aaaa/userget';
 
             $.ajax({
                 type: "GET",
@@ -88,11 +129,97 @@
                 beforeSend: function (xhr) {
                     // 增加 jwt 验证的 header 头
                     // 需在服务器端指定允许添加的 http request header，服务器端开启 允许匿名访问，否则无法 options 协商。
-                    xhr.setRequestHeader("Microshaoft-Authorization-Bearer", jwttoken);
+                    xhr.setRequestHeader("xJwtToken", jwttoken);
                 },
                 success: function (json) {
-                    $('#usershomeconfig').empty();   //清空里面的所有内容
-                    $('#usershomeconfig').html(JSON.stringify(json));
+                    $('#usershomeconfig1').empty();   //清空里面的所有内容
+                    $('#usershomeconfig1').html(JSON.stringify(json));
+                },
+                error: function (json) {
+                    alert(json.status);
+                }
+            });
+
+        }
+        // 获取用户 Home 页数据(GET：token 放在 queryString 中[xJwtToken],注意数据库参数不可有同名的)
+        function GetUserHomeInfo2() {
+            // 也跨域了
+            var portalUrl = urlDomain + ':5000/api/StoreProcedureExecutor/aaaa/userget';
+            var data = {
+                aaa: { a: { a: "111aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ" } }, xJwtToken: jwttoken
+            };
+            $.ajax({
+                type: "GET",
+                url: portalUrl,
+                // processData: false,
+                data: JSON.stringify(data),
+                dataType: "json",
+                //必须有这项的配置，不然cookie无法发送至服务端
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (json) {
+                    $('#usershomeconfig2').empty();   //清空里面的所有内容
+                    $('#usershomeconfig2').html(JSON.stringify(json));
+                },
+                error: function (json) {
+                    alert(json.status);
+                }
+            });
+
+        }
+        // 获取用户 Home 页数据(POST：token 放在 queryString 中[xJwtToken],用户数据放在 BODY 中,注意数据库参数不可有同名的)
+        function GetUserHomeInfo3() {
+            // 也跨域了
+            var portalUrl = urlDomain + ':5000/api/StoreProcedureExecutor/aaaa/userget?{xJwtToken:"' + jwttoken + '"}';
+            var data = {
+                aaa: { a: { a: "111aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ" } }, b: 123
+            };
+            $.ajax({
+                type: "POST",
+                url: portalUrl,
+                // processData: false,
+                data: JSON.stringify(data),
+                dataType: "json",
+                //必须有这项的配置，不然cookie无法发送至服务端
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (json) {
+                    $('#usershomeconfig3').empty();   //清空里面的所有内容
+                    $('#usershomeconfig3').html(JSON.stringify(json));
+                },
+                error: function (json) {
+                    alert(json.status);
+                }
+            });
+
+        }
+        // 获取用户 Home 页数据(POST：token 放在 header 中[xJwtToken],用户数据放在 BODY 中,注意数据库参数不可有同名的)
+        function GetUserHomeInfo4() {
+            // 也跨域了
+            var portalUrl = urlDomain + ':5000/api/StoreProcedureExecutor/aaaa/userget';
+            var data = {
+                aaa: { a: { a: "111aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ" } }, b: 222222
+            };
+            $.ajax({
+                type: "POST",
+                url: portalUrl,
+                // processData: false,
+                data: JSON.stringify(data),
+                dataType: "json",
+                //必须有这项的配置，不然cookie无法发送至服务端
+                xhrFields: {
+                    withCredentials: true
+                },
+                beforeSend: function (xhr) {
+                    // 增加 jwt 验证的 header 头
+                    // 需在服务器端指定允许添加的 http request header，服务器端开启 允许匿名访问，否则无法 options 协商。
+                    xhr.setRequestHeader("xJwtToken", jwttoken);
+                },
+                success: function (json) {
+                    $('#usershomeconfig4').empty();   //清空里面的所有内容
+                    $('#usershomeconfig4').html(JSON.stringify(json));
                 },
                 error: function (json) {
                     alert(json.status);

@@ -13,6 +13,7 @@ namespace Microshaoft.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAllOrigins")]
+    [Authorize]
     public class StoreProcedureExecutorController
                     : AbstractStoreProceduresExecutorControllerBase
     {
@@ -20,7 +21,7 @@ namespace Microshaoft.WebApi.Controllers
                 : base(service)
         {
         }
-        [Authorize]
+
         [BearerTokenBasedAuthorizeWebApiFilter]
         public override ActionResult<JToken> ProcessActionRequest
              (
@@ -54,11 +55,13 @@ namespace Microshaoft.WebApi.Controllers
         }
         private ActionResult<JToken> ProcessActionRequest
                         (
-                            [FromRoute]
+                                //[FromRoute]
                                 string connectionID
-                            , [FromRoute]
+                            ,
+                                //[FromRoute]
                                 string storeProcedureName
-                            , [ModelBinder(typeof(JTokenModelBinder))]
+                            ,
+                                //[ModelBinder(typeof(JTokenModelBinder))]
                                 JToken parameters = null
                         )
         {
