@@ -1,7 +1,6 @@
 ﻿#if NETCOREAPP2_X
 namespace Microshaoft.Web
 {
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Configuration;
@@ -40,23 +39,30 @@ namespace Microshaoft.Web
 
         public virtual void OnActionExecuting(ActionExecutingContext context)
         {
-            IConfiguration configuration = (IConfiguration)context.HttpContext.RequestServices.GetService(typeof(IConfiguration));
+            IConfiguration configuration = 
+                        (IConfiguration) context
+                                            .HttpContext
+                                            .RequestServices
+                                            .GetService
+                                                (
+                                                    typeof(IConfiguration)
+                                                );
 
             var request = context.HttpContext.Request;
-            StringValues token = string.Empty;
+            StringValues jwtToken = string.Empty;
             var ok = false;
 
             var jwtName = configuration
                             .GetSection("TokenName")
                             .Value;
-            var jwtCarrier = Enum
-                            .Parse<TokenStoreFlags>
-                                (
-                                    configuration
-                                        .GetSection("TokenCarrier")
-                                        .Value
-                                    , true
-                                );
+            //var jwtCarrier = Enum
+            //                .Parse<TokenStoreFlags>
+            //                    (
+            //                        configuration
+            //                            .GetSection("TokenCarrier")
+            //                            .Value
+            //                        , true
+            //                    );
             var jwtIssuer = configuration
                                 .GetSection("Issuer")
                                 .Value;
@@ -91,9 +97,19 @@ namespace Microshaoft.Web
                                         );
 
 
-            if (context.HttpContext.Items.TryGetValue(jwtName, out object value))
+            if 
+                (
+                    context
+                        .HttpContext
+                        .Items
+                        .TryGetValue
+                            (
+                                jwtName
+                                , out object value
+                            )
+                )
             {
-                token = value.ToString();
+                jwtToken = value.ToString();
                 ok = true;
             }
 
@@ -103,7 +119,7 @@ namespace Microshaoft.Web
                         .TryValidateToken
                             (
                                 jwtSecretKey
-                                , token
+                                , jwtToken
                                 , out var validatedPlainToken
                                 , out var claimsPrincipal
                             );

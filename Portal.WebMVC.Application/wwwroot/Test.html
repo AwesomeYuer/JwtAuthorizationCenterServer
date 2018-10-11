@@ -1,0 +1,353 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="Generator" content="EditPlus®,Microsoft.Boc®" />
+    <meta name="Author" content="EditPlus®,Microsoft.Boc®" />
+    <meta name="Keywords" content="EditPlus®,Microsoft.Boc®" />
+    <meta name="Description" content="EditPlus®,Microsoft.Boc®" />
+    <title>Send to Comm Server Test</title>
+    <base href="http://localhost:2410" />
+    <script type="text/javascript">
+        
+        var baseUrl = "http://22.188.10.56:9080";
+        baseUrl = "http://localhost:2410";
+        //baseUrl = "http://22.11.140.138:9999";
+        function Ajax(type, url, requestContentType, data, success, failed){
+            // 创建ajax对象
+            var xhr = null;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else {
+                xhr = new ActiveXObject('Microsoft.XMLHTTP')
+            }
+            var type = type.toUpperCase();
+            // 用于清除缓存
+            var random = Math.random();
+            if (typeof data == 'object') {
+                var str = '';
+                for(var key in data){
+                    str += key+'='+data[key]+'&';
+                }
+                data = str.replace(/&$/, '');
+            }
+            if (type == 'GET') {
+                if (data) {
+                    xhr.open('GET', url + '?' + data, true);
+                } else {
+                    xhr.open('GET', url + '?t=' + random, true);
+                }
+                xhr.send();
+            } else if (type == 'POST') {
+                xhr.open('POST', url, true);
+                // 如果需要像 html 表单那样 POST 数据，请使用 setRequestHeader() 来添加 http 头。
+                xhr.setRequestHeader("Content-type", requestContentType);
+                xhr.send(data);
+            }
+            // 处理返回数据
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        success(xhr.responseText);
+                    } else {
+                        if (failed) {
+                            failed(xhr.status);
+                        }
+                    }
+                }
+            }
+        }
+        // 测试调用
+
+        function post_MessagesService(ta)
+        {
+            Ajax('post', url, contentType, sendData, function(data) {
+                    console.log(data);
+                    //alert(data);
+                }, function(error) {
+                        console.log(error);
+                    });
+        }
+
+        function post_MessagesServiceJson(ta)
+        {
+        var sendData = document.getElementById(ta).value;
+        var url = baseUrl + "/services/restful/ummc";
+        //alert(url);
+        var contentType = "application/x-www-form-urlencoded";
+        contentType = "application/json";
+        //contentType = "";
+        Ajax('post', url, contentType, sendData, function(data) {
+        console.log(data);
+        //alert(data);
+        }, function(error) {
+        console.log(error);
+        });
+        }
+
+        function post_AppConfigService() {
+            var sendData = document.getElementById("ta2").value;
+            var url = baseUrl + "/services/restful/appconfig/" + sendData;
+            var contentType = "application/x-www-form-urlencoded";
+            contentType = "application/json";
+            Ajax('post', url, contentType, null, function (data) {
+                console.log(data);
+                //alert(data);
+            }, function (error) {
+                    console.log(error);
+                });
+        }
+
+        function post_RefreshCachesMonManService() {
+        var sendData = document.getElementById("ta3").value;
+        var url = baseUrl + "/services/restful/cachesmon/refresh/" + sendData;
+        var contentType = "application/x-www-form-urlencoded";
+        contentType = "application/json";
+        Ajax('post', url, contentType, null, function (data) {
+        console.log(data);
+        //alert(data);
+        }, function (error) {
+        console.log(error);
+        });
+        }
+
+
+        function get_PerfMonService(x) {
+            var url = baseUrl + "/services/restful/api/perfmon/PerformanceCounters/Clear/" + x;
+            var contentType = "application/x-www-form-urlencoded";
+            contentType = "application/json";
+            Ajax('get', url, contentType, "", function (data) {
+                console.log(data);
+                //alert(data);
+                }, function (error) {
+                            console.log(error);
+                    });
+        }
+        function get_PerfMonCloseSharedResources() {
+            var url = baseUrl + "/services/restful/api/perfmon/PerformanceCounters/CloseSharedResources";
+            var contentType = "application/x-www-form-urlencoded";
+            contentType = "application/json";
+            Ajax('get', url, contentType, "", function (data) {
+                console.log(data);
+                //alert(data);
+            }, function (error) {
+                    console.log(error);
+                });
+        }
+
+        
+    </script>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <td>
+                <input type="button" value="post_SendMesssage(2001)" onclick="post_MessagesService('ta2001')" />
+            </td>
+            <td rowspan="9" valign="top">
+                <input type="button" value="get_PerfClear(0)" onclick="get_PerfMonService('0/true')" />
+                <br />
+                <br />
+                <input type="button" value="get_PerfClear(10)" onclick="get_PerfMonService('10/true')" />
+                <br />
+                <br />
+                <input type="button" value="get_PerfCloseSharedResources()" onclick="get_PerfMonCloseSharedResources()" />
+                <br />
+                <br />
+                <a href="services/restful/perfmon/performanceCounters/BOC-MEF-UTTM/01.接收处理笔数(笔)/U2001/true?type=xml">PerformanceCounter</a>
+                <br />
+                <br />
+                <a href="services/restful/appconfig?type=xml">Runtime Config</a>
+                <br />
+                <input type="button" value="post_AppConfigService" onclick="post_AppConfigService()" />
+                <br />
+                settingName/settingValue/needBroadCast
+                <br />
+                <input type="text" id="ta2" value="EnableCountPerformance/false/false" size="60" />
+                <br />
+                <br />
+                <input type="button" value="post_RefreshCachesMonManService" onclick="post_RefreshCachesMonManService()" />
+                <br />
+                key/needBroadCast
+                <br />
+                <input type="text" id="ta3" value="SecretKeysTable/true" size="60" />
+                <br />
+                <br />
+                <a href="services/restful/cachesmon?type=xml">Caches</a>
+                <br />
+                <a href="services/restful/cachesmon/WebDataBaseRoutes?type=xml">WebDataBaseRoutes</a>
+                <br />
+                <a href="services/restful/cachesmon/WebServersSevicesAddresses?type=xml">WebServersSevicesAddresses</a>
+                <br />
+                <a href="services/restful/cachesmon/SecretKeys?type=xml">SecretKeys</a>
+                <br />
+                <a href="services/restful/cachesmon/UsedSecretKeys?type=xml">UsedSecretKeys</a>
+                <br />
+                <a href="services/restful/cachesmon/DataBases?type=xml">DataBases</a>
+                <br />
+                <a href="services/restful/cachesmon/Systems?type=xml">Systems</a>
+                <br />
+                <a href="services/restful/cachesmon/SystemCodeMapping?type=xml">SystemCodeMapping</a>
+                <br />
+                <a href="services/restful/debugtest/tracecode/parse/1111111111111111111?type=xml">TraceCode</a>
+                <br />
+                <a href="services/restful/debugtest/secretkey/generate?type=xml">GenerateSecretKey</a>
+                <br />
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+<textarea id="ta2001" rows="20" cols="105">
+<?xml version="1.0" encoding="UTF-8" ?>
+<req>
+    <header>
+        <tranno>U2001</tranno>
+        <systemcode>01</systemcode>
+    </header>
+    <body>
+        <tellerno>0879201</tellerno>
+        <branchno>27041</branchno>
+        <provincecode>00002</provincecode>
+        <transdate>20151228</transdate>
+        <transnumber>1234567890</transnumber>
+        <ctype>1</ctype>
+        <circlecount>3</circlecount>
+        <list>
+            <rec>
+                <lbl>姓名</lbl>
+                <lblval>张三</lblval>
+                <level>1</level>
+                <create>1</create>
+                <index>1</index>
+            </rec>
+            <rec>
+                <lbl>存款金额</lbl>
+                <lblval>10000</lblval>
+                <level>1</level>
+                <create>1</create>
+                <index>2</index>
+            </rec>
+            <rec>
+                <lbl>经办柜员</lbl>
+                <lblval>456000</lblval>
+                <level>0</level>
+                <create>0</create>
+                <index>3</index>
+            </rec>
+        </list>
+    </body>
+</req>
+</textarea>
+                </div>
+            </td>
+            </tr>
+        <tr>
+            <td>
+                <input type="button" value="post_SendMesssage(2002)" onclick="post_MessagesService('ta2002')" />
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <div>
+<textarea id="ta2002" rows="20" cols="105">
+<?xml version="1.0" encoding="utf-8" ?>
+<req>
+    <header>
+        <tranno>U2002</tranno>
+        <systemcode>01</systemcode>
+    </header>
+    <body>
+        <uttmcode>QBNWU9TJ3BWBJJ81</uttmcode>
+        <uttmdate>20160127</uttmdate>
+    </body>
+</req>
+</textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <input type="button" value="post_SendMesssage(2003)" onclick="post_MessagesService('ta2003')" />
+                <div>
+<textarea id="ta2003" rows="20" cols="105">
+<?xml version="1.0" encoding="utf-8" ?>
+<req>
+    <header>
+        <tranno>U2003</tranno>
+        <systemcode>01</systemcode>
+    </header>
+    <body>
+        <uttmcode>QBNWU9TJ3BWBJJ81</uttmcode>
+        <uttmdate>20160127</uttmdate>
+        <reversalteller>2390984</reversalteller>
+        <branchno>27082</branchno>
+        <supervisorid>1390984</supervisorid>
+        <reversaldate>20151228</reversaldate>
+    </body>
+</req>
+
+</textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+
+                <input type="button" value="post_SendMesssage(2004)" onclick="post_MessagesService('ta2004')" />
+
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+
+                <div>
+<textarea id="ta2004" rows="20" cols="105">
+<?xml version="1.0" encoding="utf-8" ?>
+<req>
+    <header>
+        <tranno>U2004</tranno>
+        <systemcode>01</systemcode>
+    </header>
+    <body>
+        <tellerno>0879201</tellerno>
+        <branchno>27041</branchno>
+        <provincecode>00002</provincecode>
+        <transdate>20151228</transdate>
+        <transnumber>1234567890</transnumber>
+    </body>
+</req>
+</textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+
+                <input type="button" value="post_MessagesServiceJson(UMMC)" onclick="post_MessagesServiceJson('taUMMC')" />
+
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+
+                <div>
+                    <textarea id="taUMMC" rows="20" cols="105">
+{
+   StartTime : "2016-09-24T13:09:26.4933636+08:00"
+   , EncryptedWorkingKeyHexString : "22D115E78B6ACD33D95C95CD9D2A5230986FA5AF45B5F4A6D38F615811866424"
+}
+                    </textarea>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

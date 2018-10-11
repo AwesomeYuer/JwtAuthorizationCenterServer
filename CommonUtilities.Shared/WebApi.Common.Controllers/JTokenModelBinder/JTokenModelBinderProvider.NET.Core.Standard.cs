@@ -6,12 +6,9 @@ namespace Microshaoft.WebApi.ModelBinders
     using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
-    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Web;
     public class JTokenModelBinder : IModelBinder
@@ -83,91 +80,80 @@ namespace Microshaoft.WebApi.ModelBinders
                 }
             }
 
+
+
+
             // 取 jwtToken 优先级顺序：Header → QueryString → Body
 
             StringValues jwtToken = string.Empty;
-            IConfiguration configuration = (IConfiguration)request.HttpContext.RequestServices.GetService(typeof(IConfiguration));
-            string jwtName = string.Empty;
+            IConfiguration configuration = 
+                    (IConfiguration) request
+                                        .HttpContext
+                                        .RequestServices
+                                        .GetService
+                                            (
+                                                typeof(IConfiguration)
+                                            );
+            var jwtTokenName = configuration
+                                .GetSection("TokenName")
+                                .Value;
+            var needProcessJwtToken = !jwtTokenName.IsNullOrEmptyOrWhiteSpace();
 
-            RequestHeaderProcess();
-            if (jToken != null && jToken[jwtName] != null)
+            void JwtTokenProcessInJToken()
             {
-                jwtName = configuration.GetSection("TokenName").Value;
-                jwtToken = jToken[jwtName].ToString();
-            }
-            else
-            {
-                RequestBodyProcess();
-                if (jToken != null && jToken[jwtName] != null)
+                if (needProcessJwtToken)
                 {
-                    jwtName = configuration.GetSection("TokenName").Value;
-                    jwtToken = jToken[jwtName].ToString();
+                    if (jToken != null)
+                    {
+                        if (StringValues.IsNullOrEmpty(jwtToken))
+                        {
+                            var j = jToken[jwtTokenName];
+                            if (j != null)
+                            {
+                                jwtToken = j.Value<string>();
+                            }
+                        }
+                    }
                 }
             }
 
-            //var jwtName = configuration.GetSection("TokenName").Value;
-
-            //if (jToken != null)
-            //{
-            //    token = jToken[jwtName].ToString();
-            //}
-
-
-
-
-            //if
-            //    (
-            //        string.Compare(request.Method, "get", true) == 0
-            //    )
-            //{
-            //    RequestHeaderProcess();
-            //    if (jToken == null)
-            //    {
-            //        RequestBodyProcess();
-            //    }
-            //}
-            //if
-            //if
-            //    (
-            //        string.Compare(request.Method, "post", true) == 0
-            //    )
-            //{
-            //    RequestBodyProcess();
-            //    if (token == string.Empty)
-            //    {
-            //        token = jToken[jwtName].ToString();
-            //    }
-            //    if (jToken == null)
-            //    {
-            //        RequestHeaderProcess();
-            //    }
-            //}
+            if (needProcessJwtToken)
+            {
+                request
+                    .Headers
+                    .TryGetValue
+                        (
+                           jwtTokenName
+                           , out jwtToken
+                        );
+            }
+            RequestHeaderProcess();
+            JwtTokenProcessInJToken();
+            if
+                (
+                    string.Compare(request.Method, "post", true) == 0
+                )
+            {
+                RequestBodyProcess();
+                JwtTokenProcessInJToken();
+                if (jToken == null)
+                {
+                    RequestHeaderProcess();
+                }
+            }
+            if (!StringValues.IsNullOrEmpty(jwtToken))
+            {
+                request
+                    .HttpContext
+                    .Items
+                    .Add
+                        (
+                            jwtTokenName
+                            , jwtToken
+                        );
+            }
 
 
-
-
-            //try
-            //{
-
-
-            //if (request.Headers.TryGetValue(jwtName, out token))
-            //{
-
-            //}
-            ////else if (request.Cookies.TryGetValue(jwtName, out var t))
-            ////{
-            ////    token = t;
-            ////}
-            //else
-            //{
-            //    token = jToken[jwtName].ToString();
-            //}
-            request.HttpContext.Items.Add(jwtName, jwtToken);
-            //}
-            //catch
-            //{
-
-            //}
 
             bindingContext
                     .Result =

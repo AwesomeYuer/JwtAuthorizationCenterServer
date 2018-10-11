@@ -2,7 +2,7 @@
   "TokenName": "xJwtToken",
   "TokenCarrier": "Header",
   "NeedValidIP": "false",
-  "ExpireInSeconds": "86400",
+  "ExpireInSeconds": "2286400",
   "Issuer": "aaa",
   "Audiences": [
     "app1",
