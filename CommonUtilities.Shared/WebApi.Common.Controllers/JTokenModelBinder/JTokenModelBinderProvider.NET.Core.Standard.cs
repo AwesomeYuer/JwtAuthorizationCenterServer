@@ -136,10 +136,10 @@ namespace Microshaoft.WebApi.ModelBinders
             {
                 RequestBodyProcess();
                 JwtTokenProcessInJToken();
-                if (jToken == null)
-                {
-                    RequestHeaderProcess();
-                }
+                //if (jToken == null)
+                //{
+                //    RequestHeaderProcess();
+                //}
             }
             if (!StringValues.IsNullOrEmpty(jwtToken))
             {
