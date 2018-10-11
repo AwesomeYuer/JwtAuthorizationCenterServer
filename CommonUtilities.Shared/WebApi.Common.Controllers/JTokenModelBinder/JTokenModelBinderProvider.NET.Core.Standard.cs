@@ -79,12 +79,7 @@ namespace Microshaoft.WebApi.ModelBinders
                     jToken = request.Query.ToJToken();
                 }
             }
-
-
-
-
             // 取 jwtToken 优先级顺序：Header → QueryString → Body
-
             StringValues jwtToken = string.Empty;
             IConfiguration configuration = 
                     (IConfiguration) request
@@ -98,7 +93,6 @@ namespace Microshaoft.WebApi.ModelBinders
                                 .GetSection("TokenName")
                                 .Value;
             var needProcessJwtToken = !jwtTokenName.IsNullOrEmptyOrWhiteSpace();
-
             void JwtTokenProcessInJToken()
             {
                 if (needProcessJwtToken)
@@ -116,7 +110,6 @@ namespace Microshaoft.WebApi.ModelBinders
                     }
                 }
             }
-
             if (needProcessJwtToken)
             {
                 request
@@ -152,40 +145,37 @@ namespace Microshaoft.WebApi.ModelBinders
                             , jwtToken
                         );
             }
-
-
-
             bindingContext
                     .Result =
-                            ModelBindingResult
-                                    .Success
-                                        (
-                                            jToken
-                                        );
+                        ModelBindingResult
+                                .Success
+                                    (
+                                        jToken
+                                    );
         }
     }
-    public class JTokenModelBinderProvider
-                            : IModelBinderProvider
-                                , IModelBinder
-    {
-        private IModelBinder _binder = new JTokenModelBinder();
-        public async Task BindModelAsync(ModelBindingContext bindingContext)
-        {
-            await _binder.BindModelAsync(bindingContext);
-        }
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            if (context.Metadata.ModelType == typeof(JToken))
-            {
-                //_binder = new JTokenModelBinder();
-                return _binder;
-            }
-            return null;
-        }
-    }
+    //public class JTokenModelBinderProvider
+    //                        : IModelBinderProvider
+    //                            , IModelBinder
+    //{
+    //    private IModelBinder _binder = new JTokenModelBinder();
+    //    public async Task BindModelAsync(ModelBindingContext bindingContext)
+    //    {
+    //        await _binder.BindModelAsync(bindingContext);
+    //    }
+    //    public IModelBinder GetBinder(ModelBinderProviderContext context)
+    //    {
+    //        if (context == null)
+    //        {
+    //            throw new ArgumentNullException(nameof(context));
+    //        }
+    //        if (context.Metadata.ModelType == typeof(JToken))
+    //        {
+    //            //_binder = new JTokenModelBinder();
+    //            return _binder;
+    //        }
+    //        return null;
+    //    }
+    //}
 }
 #endif
