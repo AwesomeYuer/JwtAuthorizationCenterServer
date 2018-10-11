@@ -29,21 +29,27 @@
         public void ConfigureServices(IServiceCollection services)
         {
             // 允许跨域
-            services.AddCors(options =>
-                options.AddPolicy(
-                    "AllowAllOrigins",
-                    builder => builder
-                        //.WithOrigins("127.0.0.1:52184")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowAnyOrigin()
-                        .AllowCredentials()
-                        // 允许浏览器添加的 http request header
-                        .WithExposedHeaders(
-                                                //"Microshaoft-Authorization-Bearer",
-                                                "*"
-                                           )
-                        )
+            services.AddCors
+                        (
+                            options =>
+                                options
+                                    .AddPolicy
+                                        (
+                                            "AllowAllOrigins"
+                                            , builder =>
+                                                builder
+                                                    //.WithOrigins("127.0.0.1:52184")
+                                                    .AllowAnyMethod()
+                                                    .AllowAnyHeader()
+                                                    .AllowAnyOrigin()
+                                                    .AllowCredentials()
+                                                    // 允许浏览器添加的 http request header
+                                                    .WithExposedHeaders
+                                                        (
+                                                            //"Microshaoft-Authorization-Bearer",
+                                                            "*"
+                                                        )
+                                        )
             );
 
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
