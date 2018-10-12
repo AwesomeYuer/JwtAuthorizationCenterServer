@@ -112,7 +112,7 @@ namespace Microshaoft
                                             .Tokens
                                             .Jwt
                                             .JwtSecurityTokenHandler();
-                var jst = ((JwtSecurityToken)tokenHandler.ReadToken(token));
+                var jwtSecurityToken = ((JwtSecurityToken)tokenHandler.ReadToken(token));
                 var signingKey = new Microsoft
                                         .IdentityModel
                                         .Tokens
@@ -127,9 +127,9 @@ namespace Microshaoft
                                                 );
                 var tokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidIssuer = jst.Issuer,
+                    ValidIssuer = jwtSecurityToken.Issuer,
                     ValidateIssuer = true,
-                    ValidAudiences = jst.Audiences,
+                    ValidAudiences = jwtSecurityToken.Audiences,
                     ValidateAudience = true,
                     IssuerSigningKey = signingKey,
                     ValidateIssuerSigningKey = true,
