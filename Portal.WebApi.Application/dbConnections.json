@@ -19,6 +19,9 @@
       "ConnectionID": "aaaa",
       "DataBaseType": "mssql",
       "ConnectionString": "Initial Catalog=eip_portal;Data Source=localhost;User=sa;Password=!@#123QWE",
+      "CachedParametersDefinitionExpiredInSeconds": 8640000,
+      "NeedAutoRefreshExecutedTimeForSlideExpire": true,
+
       "WhiteList": [
         //{
         //  "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get",

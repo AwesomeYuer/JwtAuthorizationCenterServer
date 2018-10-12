@@ -164,7 +164,18 @@ namespace Microshaoft.Web
                                         //, ConnectionTimeoutInSeconds = connectionTimeoutInSeconds
                                         , DataBaseType = Enum.Parse<DataBasesType>(configuration[$"{x.Key}DataBaseType"], true)
                                         , AllowExecuteWhiteList = allowExecuteWhiteList
+                                      
                                     };
+                                    var cv = configuration[$"{x.Key}CachedParametersDefinitionExpiredInSeconds"];
+                                    if (cv != null)
+                                    {
+                                        r.CachedParametersDefinitionExpiredInSeconds = int.Parse(cv);
+                                    }
+                                    cv = configuration[$"{x.Key}NeedAutoRefreshExecutedTimeForSlideExpire"];
+                                    if (cv != null)
+                                    {
+                                        r.NeedAutoRefreshExecutedTimeForSlideExpire = bool.Parse(cv);
+                                    }
                                     return r;
                                 }
                                 , StringComparer
