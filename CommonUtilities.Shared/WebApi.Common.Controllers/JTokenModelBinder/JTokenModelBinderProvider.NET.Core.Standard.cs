@@ -8,7 +8,6 @@ namespace Microshaoft.WebApi.ModelBinders
     using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.Extensions.Primitives;
     using Newtonsoft.Json.Linq;
-    using System;
     using System.IO;
     using System.Threading.Tasks;
     using System.Web;
@@ -21,12 +20,12 @@ namespace Microshaoft.WebApi.ModelBinders
                                     .Request;
 
             JToken jToken = null;
-            async void RequestBodyProcess()
+            async void RequestFormBodyProcess()
             {
                 if (request.HasFormContentType)
                 {
-                    var formBinder = new FormCollectionModelBinder(NullLoggerFactory.Instance);
-                    await formBinder.BindModelAsync(bindingContext);
+                    var formCollectionModelBinder = new FormCollectionModelBinder(NullLoggerFactory.Instance);
+                    await formCollectionModelBinder.BindModelAsync(bindingContext);
                     if (bindingContext.Result.IsModelSet)
                     {
                         jToken = JTokenWebHelper
@@ -56,15 +55,27 @@ namespace Microshaoft.WebApi.ModelBinders
                     }
                 }
             }
-            void RequestHeaderProcess()
+            void RequestQueryStringHeaderProcess()
             {
                 var qs = request.QueryString.Value;
+                if (qs.IsNullOrEmptyOrWhiteSpace())
+                {
+                    return;
+                }
                 qs = HttpUtility
                             .UrlDecode
                                 (
                                     qs
                                 );
+                if (qs.IsNullOrEmptyOrWhiteSpace())
+                {
+                    return;
+                }
                 qs = qs.TrimStart('?');
+                if (qs.IsNullOrEmptyOrWhiteSpace())
+                {
+                    return;
+                }
                 var isJson = false;
                 try
                 {
@@ -93,10 +104,10 @@ namespace Microshaoft.WebApi.ModelBinders
             var jwtTokenName = configuration
                                 .GetSection("TokenName")
                                 .Value;
-            var needProcessJwtToken = !jwtTokenName.IsNullOrEmptyOrWhiteSpace();
-            void JwtTokenProcessInJToken()
+            var needExtractJwtToken = !jwtTokenName.IsNullOrEmptyOrWhiteSpace();
+            void ExtractJwtTokenInJToken()
             {
-                if (needProcessJwtToken)
+                if (needExtractJwtToken)
                 {
                     if (jToken != null)
                     {
@@ -111,7 +122,7 @@ namespace Microshaoft.WebApi.ModelBinders
                     }
                 }
             }
-            if (needProcessJwtToken)
+            if (needExtractJwtToken)
             {
                 request
                     .Headers
@@ -121,15 +132,15 @@ namespace Microshaoft.WebApi.ModelBinders
                            , out jwtToken
                         );
             }
-            RequestHeaderProcess();
-            JwtTokenProcessInJToken();
+            RequestQueryStringHeaderProcess();
+            ExtractJwtTokenInJToken();
             if
                 (
                     string.Compare(request.Method, "post", true) == 0
                 )
             {
-                RequestBodyProcess();
-                JwtTokenProcessInJToken();
+                RequestFormBodyProcess();
+                ExtractJwtTokenInJToken();
                 //if (jToken == null)
                 //{
                 //    RequestHeaderProcess();
