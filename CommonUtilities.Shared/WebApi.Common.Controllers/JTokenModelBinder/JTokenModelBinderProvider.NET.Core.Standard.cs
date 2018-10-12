@@ -5,6 +5,7 @@ namespace Microshaoft.WebApi.ModelBinders
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.Extensions.Primitives;
     using Newtonsoft.Json.Linq;
     using System;
@@ -24,7 +25,7 @@ namespace Microshaoft.WebApi.ModelBinders
             {
                 if (request.HasFormContentType)
                 {
-                    var formBinder = new FormCollectionModelBinder();
+                    var formBinder = new FormCollectionModelBinder(NullLoggerFactory.Instance);
                     await formBinder.BindModelAsync(bindingContext);
                     if (bindingContext.Result.IsModelSet)
                     {
