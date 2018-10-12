@@ -1,4 +1,6 @@
 {
+  "CachedParametersDefinitionExpiredInSecondsz": 18640000,
+  "NeedAutoRefreshExecutedTimeForSlideExpirez": false,
   "Connections": [
     {
       "ConnectionID": "mssql1",
@@ -19,8 +21,7 @@
       "ConnectionID": "aaaa",
       "DataBaseType": "mssql",
       "ConnectionString": "Initial Catalog=eip_portal;Data Source=localhost;User=sa;Password=!@#123QWE",
-      "CachedParametersDefinitionExpiredInSeconds": 8640000,
-      "NeedAutoRefreshExecutedTimeForSlideExpire": true,
+
 
       "WhiteList": [
         //{
@@ -31,7 +32,7 @@
         {
           "StoreProcedureName": "usp_UsersHome_Get",
           "StoreProcedureAlias": "userget",
-          "AllowedHttpMethods": "Get"
+          "AllowedHttpMethods": "All"
         },
         {
           "StoreProcedureName": "usp_UsersHome_Update",
@@ -39,6 +40,6 @@
           "AllowedHttpMethods": "Post"
         }
       ]
-    },
-  ]  
+    }
+  ]
 }

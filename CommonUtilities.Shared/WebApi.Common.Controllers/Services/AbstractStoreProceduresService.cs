@@ -58,6 +58,28 @@ namespace Microshaoft.Web
                         new ConfigurationBuilder()
                                 .AddJsonFile(dbConnectionsJsonFile);
             var configuration = configurationBuilder.Build();
+
+
+            var cv = configuration.GetSection("NeedAutoRefreshExecutedTimeForSlideExpire").Value;
+
+            if (!cv.IsNullOrEmptyOrWhiteSpace())
+            {
+                if (bool.TryParse(cv, out var b))
+                {
+                    _needAutoRefreshExecutedTimeForSlideExpire = b;
+                }
+            }
+
+            cv = configuration.GetSection("CachedParametersDefinitionExpiredInSeconds").Value;
+
+            if (!cv.IsNullOrEmptyOrWhiteSpace())
+            {
+                if (int.TryParse(cv, out var i))
+                {
+                    _cachedParametersDefinitionExpiredInSeconds = i;
+                }
+            }
+
             var result =
                     configuration
                         .GetSection("Connections")
@@ -166,16 +188,16 @@ namespace Microshaoft.Web
                                         , AllowExecuteWhiteList = allowExecuteWhiteList
                                       
                                     };
-                                    var cv = configuration[$"{x.Key}CachedParametersDefinitionExpiredInSeconds"];
-                                    if (cv != null)
-                                    {
-                                        r.CachedParametersDefinitionExpiredInSeconds = int.Parse(cv);
-                                    }
-                                    cv = configuration[$"{x.Key}NeedAutoRefreshExecutedTimeForSlideExpire"];
-                                    if (cv != null)
-                                    {
-                                        r.NeedAutoRefreshExecutedTimeForSlideExpire = bool.Parse(cv);
-                                    }
+                                    // cv = configuration[$"{x.Key}CachedParametersDefinitionExpiredInSeconds"];
+                                    //if (cv != null)
+                                    //{
+                                    //    r.CachedParametersDefinitionExpiredInSeconds = int.Parse(cv);
+                                    //}
+                                    //cv = configuration[$"{x.Key}NeedAutoRefreshExecutedTimeForSlideExpire"];
+                                    //if (cv != null)
+                                    //{
+                                    //    r.NeedAutoRefreshExecutedTimeForSlideExpire = bool.Parse(cv);
+                                    //}
                                     return r;
                                 }
                                 , StringComparer
@@ -359,17 +381,20 @@ namespace Microshaoft.Web
                         }
                     );
         }
-        protected abstract int 
-                    CachedParametersDefinitionExpiredInSeconds
+
+        private int _cachedParametersDefinitionExpiredInSeconds = 3600;
+        protected virtual int CachedParametersDefinitionExpiredInSeconds
         {
-            get;
-            //set;
+            get => _cachedParametersDefinitionExpiredInSeconds;
+            private set => _cachedParametersDefinitionExpiredInSeconds = value;
         }
-        protected abstract bool 
-                    NeedAutoRefreshExecutedTimeForSlideExpire
+       
+
+        private bool _needAutoRefreshExecutedTimeForSlideExpire = true;
+        protected virtual bool NeedAutoRefreshExecutedTimeForSlideExpire
         {
-            get;
-            //set;
+            get => _needAutoRefreshExecutedTimeForSlideExpire;
+            private set => _needAutoRefreshExecutedTimeForSlideExpire = value;
         }
 
         private IDictionary<string, DataBaseConnectionInfo> 
@@ -377,6 +402,8 @@ namespace Microshaoft.Web
 
         private IDictionary<string, IStoreProcedureExecutable>
                     _indexedExecutors;
+
+
 
         public 
             (int StatusCode, JToken Result)

@@ -6,6 +6,9 @@
         //called by base AbstractStoreProceduresService constructor
         public override void Initialize()
         {
+
+            
+
             //using derived class implmention
             LoadDataBasesConnectionsInfo("dbConnections.json");
             //using base class implmention
@@ -19,9 +22,13 @@
             base
                 .LoadDataBasesConnectionsInfo(dbConnectionsJsonFile);
         }
-        protected override int
-                CachedParametersDefinitionExpiredInSeconds => 11;
-        protected override bool 
-                NeedAutoRefreshExecutedTimeForSlideExpire => true;
+        //protected override int
+        //        CachedParametersDefinitionExpiredInSeconds
+        //{
+        //    get;
+        //    //private set;
+        //}
+        //protected override bool 
+        //        NeedAutoRefreshExecutedTimeForSlideExpire => true;
     }
 }
