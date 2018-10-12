@@ -31,8 +31,8 @@ namespace Microshaoft.WebApi.Controllers
         public int ConnectionTimeoutInSeconds = 120;
 
 
-        public int CachedParametersDefinitionExpiredInSeconds = 3600;
-        public bool NeedAutoRefreshExecutedTimeForSlideExpire = true;
+        //public int CachedParametersDefinitionExpiredInSeconds = 3600;
+        //public bool NeedAutoRefreshExecutedTimeForSlideExpire = true;
 
     }
     public abstract partial class 
