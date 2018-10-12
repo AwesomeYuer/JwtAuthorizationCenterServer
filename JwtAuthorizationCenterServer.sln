@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00", "00", "{C0E64028-2DD1-4603-B116-4964179E99B2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.Libraries", "00.Libraries", "{C0E64028-2DD1-4603-B116-4964179E99B2}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommonUtilities.Shared", "CommonUtilities.Shared\CommonUtilities.Shared.shproj", "{7878DF3A-8418-4ACA-B415-300B81AFD792}"
 EndProject
@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.WebApi.Application",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSQL.StoreProcedureWebApiExecutor.Plugin", "StoreProcedureWebApiExecutorsPlugins\MsSQL.StoreProcedureWebApiExecutor.Plugin\MsSQL.StoreProcedureWebApiExecutor.Plugin.csproj", "{05BD2285-370D-448A-936B-54589BE8B79E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.WebMVC.Application", "Portal.WebMVC.Application\Portal.WebMVC.Application.csproj", "{8AAC2271-35B9-4B67-997F-5CAC0BD41394}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.WebMVC.Application", "Portal.WebMVC.Application\Portal.WebMVC.Application.csproj", "{8AAC2271-35B9-4B67-997F-5CAC0BD41394}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10.CompositionPlugins", "10.CompositionPlugins", "{4C9E8943-947A-4A2A-87DB-2FDD91260BD3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -59,7 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7878DF3A-8418-4ACA-B415-300B81AFD792} = {C0E64028-2DD1-4603-B116-4964179E99B2}
 		{558C221F-060B-489D-9394-F4F826019E05} = {C0E64028-2DD1-4603-B116-4964179E99B2}
-		{05BD2285-370D-448A-936B-54589BE8B79E} = {C0E64028-2DD1-4603-B116-4964179E99B2}
+		{05BD2285-370D-448A-936B-54589BE8B79E} = {4C9E8943-947A-4A2A-87DB-2FDD91260BD3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0668C13-3874-4362-97FA-D6F08DB3D352}
