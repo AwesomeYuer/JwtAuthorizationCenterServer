@@ -28,7 +28,7 @@
         {
           "StoreProcedureName": "usp_UsersHome_Get",
           "StoreProcedureAlias": "userget",
-          "AllowedHttpMethods": "Get"
+          "AllowedHttpMethods": "All"
         },
         {
           "StoreProcedureName": "usp_UsersHome_Update",
