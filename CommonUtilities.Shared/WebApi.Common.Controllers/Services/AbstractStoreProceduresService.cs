@@ -17,8 +17,8 @@ namespace Microshaoft.Web
         (int StatusCode, JToken Result)
                 Process
                      (
-                        string connectionID
-                        , string storeProcedureName
+                        //string connectionID
+                        string routeName
                         , JToken parameters = null
                         , Func
                                 <
@@ -38,29 +38,26 @@ namespace Microshaoft.Web
                                 : IStoreProceduresWebApiService
     {
         private static object _locker = new object();
-        public AbstractStoreProceduresService()
+        protected readonly IConfiguration _configuration;
+
+        public AbstractStoreProceduresService(IConfiguration configuration)
         {
+            _configuration = configuration;
             Initialize();
         }
         //for override from derived class
         public virtual void Initialize()
         {
-            LoadDataBasesConnectionsInfo("dbConnections.json");
-            LoadDynamicExecutors("dynamicLoadExecutorsPaths.json");
+            LoadDataBasesConnectionsInfo();
+            LoadDynamicExecutors();
         }
         protected IDictionary<string, DataBaseConnectionInfo>
                         GetDataBasesConnectionsInfoProcess
-                                    (
-                                        string dbConnectionsJsonFile = "dbConnections.json"
-                                    )
+                                    ()
         {
-            var configurationBuilder =
-                        new ConfigurationBuilder()
-                                .AddJsonFile(dbConnectionsJsonFile);
-            var configuration = configurationBuilder.Build();
-
-
-            var cv = configuration.GetSection("NeedAutoRefreshExecutedTimeForSlideExpire").Value;
+            var cv = _configuration
+                            .GetSection("NeedAutoRefreshExecutedTimeForSlideExpire")
+                            .Value;
 
             if (!cv.IsNullOrEmptyOrWhiteSpace())
             {
@@ -70,7 +67,9 @@ namespace Microshaoft.Web
                 }
             }
 
-            cv = configuration.GetSection("CachedParametersDefinitionExpiredInSeconds").Value;
+            cv = _configuration
+                        .GetSection("CachedParametersDefinitionExpiredInSeconds")
+                        .Value;
 
             if (!cv.IsNullOrEmptyOrWhiteSpace())
             {
@@ -80,139 +79,282 @@ namespace Microshaoft.Web
                 }
             }
 
-            var result =
-                    configuration
-                        .GetSection("Connections")
-                        .AsEnumerable()
-                        .Where
-                            (
-                                (x) =>
-                                {
-                                    return
-                                        !x
-                                            .Value
-                                            .IsNullOrEmptyOrWhiteSpace();
-                                }
-                            )
-                        .GroupBy
-                            (
-                                (x) =>
-                                {
-                                    var key = x.Key;
-                                    var i = key.FindIndex(":", 2);
-                                    var rr = key.Substring(0, i);
-                                    return rr;
-                                }
-                            )
-                        .ToDictionary
-                            (
-                                (x) =>
-                                {
-                                    var r = configuration[$"{x.Key}ConnectionID"];
-                                    return r;
-                                }
-                                , (x) =>
-                                {
-                                    var allowExecuteWhiteList
-                                        = configuration
-                                            .GetSection($"{x.Key}WhiteList")
-                                            .AsEnumerable()
-                                            .Where
-                                                (
-                                                    (xx) =>
-                                                    {
-                                                        var v = xx.Value;
-                                                        var rr = !v.IsNullOrEmptyOrWhiteSpace();
-                                                        return rr;
-                                                    }
-                                                )
-                                            .GroupBy
-                                                (
-                                                    (xx) =>
-                                                    {
-                                                        var key = xx.Key;
-                                                        var i = key.FindIndex(":", 4);
-                                                        var rr = key.Substring(0, i);
-                                                        return rr;
-                                                    }
-                                                )
-                                            .ToDictionary
-                                                (
-                                                    (xx) =>
-                                                    {
-                                                        var key = configuration[$"{xx.Key}StoreProcedureAlias"];
-                                                        var storeProcedureName = configuration[$"{xx.Key}StoreProcedureName"];
-                                                        if (key.IsNullOrEmptyOrWhiteSpace())
-                                                        {
-                                                            key = storeProcedureName;
-                                                        }
-                                                        return key;
-                                                    }
-                                                    ,
-                                                    (xx) =>
-                                                    {
-                                                        var storeProcedureName = configuration[$"{xx.Key}StoreProcedureName"];
-                                                        var s = configuration[$"{xx.Key}AllowedHttpMethods"];
-                                                        var allowedHttpMethods =
-                                                                    Enum
-                                                                        .Parse<HttpMethodsFlags>
-                                                                            (
-                                                                                s
-                                                                                , true
-                                                                            );
-                                                        var rr = new StoreProcedureInfo()
-                                                        {
-                                                            Alias = xx.Key
-                                                            , Name = storeProcedureName
-                                                            , AllowedHttpMethods = allowedHttpMethods
-                                                        };
-                                                        return
-                                                            rr;
-                                                    }
-                                                    ,
-                                                    StringComparer
-                                                            .OrdinalIgnoreCase
-                                                );
-                                    //var connectionTimeoutInSeconds = 120;
-                                    //int.TryParse
-                                    //        (
-                                    //            configuration[$"{x.Key}ConnectionTimeoutInSeconds"]
-                                    //            , out connectionTimeoutInSeconds
-                                    //        );
-                                    var r = new DataBaseConnectionInfo()
-                                    {
-                                        ConnectionID = configuration[$"{x.Key}ConnectionID"]
-                                        , ConnectionString = configuration[$"{x.Key}ConnectionString"]
-                                        //, ConnectionTimeoutInSeconds = connectionTimeoutInSeconds
-                                        , DataBaseType = Enum.Parse<DataBasesType>(configuration[$"{x.Key}DataBaseType"], true)
-                                        , AllowExecuteWhiteList = allowExecuteWhiteList
+            //var result =
+            //        _configuration
+            //            .GetSection("Connections")
+            //            .AsEnumerable()
+            //            .Where
+            //                (
+            //                    (x) =>
+            //                    {
+            //                        return
+            //                            !x
+            //                                .Value
+            //                                .IsNullOrEmptyOrWhiteSpace();
+            //                    }
+            //                )
+            //            .GroupBy
+            //                (
+            //                    (x) =>
+            //                    {
+            //                        var key = x.Key;
+            //                        var i = key.FindIndex(":", 2);
+            //                        var rr = key.Substring(0, i);
+            //                        return rr;
+            //                    }
+            //                )
+            //            .ToArray();
+            
+            //var connections = _configuration
+            //                        .GetSection("Connections")
+            //                        .GetChildren()
+            //                        .Select
+            //                        (
+            //                            (x) =>
+            //                            {
+            //                               return
+                                          
+            //                                (
+            //                                     x.GetValue<string>("ConnectionID"),
+            //                                     x.GetValue<string>("DataBaseType"),
+            //                                     x.GetValue<string>("ConnectionString"),
+            //                                     x
+            //                                        .GetSection("WhiteList")
+            //                                        .GetChildren()
+            //                                        .Select
+            //                                            (
+            //                                                (xx) =>
+            //                                                {
+            //                                                    return
+            //                                                        (
+            //                                                            xx.GetValue<string>("StoreProcedureName"),
+            //                                                            xx.GetValue<string>("StoreProcedureAlias"),
+            //                                                            xx.GetValue<string>("AllowedHttpMethods")
+            //                                                        );
+            //                                                }
+            //                                            )
+            //                                        .ToArray()
+            //                                 );
+            //                            }
+            //                        )
+            //                        //.ToList();
+            //                        .ToList
+            //                            <
+            //                                (
+            //                                    string ConnectionID
+            //                                    , string DataBaseType
+            //                                    , string ConnectionString
+            //                                    , 
+            //                                        (
+            //                                                    string StoreProcedureName
+            //                                                    , string StoreProcedureAlias
+            //                                                    , string AllowedHttpMethods
+            //                                        )
+            //                                        [] WhiteList
+            //                                )
+            //                            >();
+
+            //var dict = connections
+            //                .ToDictionary
+            //                    (
+            //                        (x) =>
+            //                        {
+            //                            return
+            //                                x.ConnectionID;
+            //                        }
+            //                        ,
+            //                        (x) =>
+            //                        {
+            //                            var r =
+            //                            x.WhiteList
+            //                                .Select
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            (
+            //                                                    string ConnectionID
+            //                                                    , DataBasesType DataBaseType
+            //                                                    , string ConnectionString
+            //                                                    , string StoreProcedureName
+            //                                                    , string StoreProcedureAlias
+            //                                                    , HttpMethodsFlags AllowedHttpMethods
+            //                                            ) rr =
+            //                                                (
+            //                                                    x.ConnectionID
+            //                                                    , Enum
+            //                                                        .Parse<DataBasesType>
+            //                                                            (
+            //                                                                x.DataBaseType
+            //                                                                , true
+            //                                                            )
+            //                                                    , x.ConnectionString
+            //                                                    , xx.StoreProcedureName
+            //                                                    , 
+            //                                                        (
+            //                                                            !xx
+            //                                                                .StoreProcedureAlias
+            //                                                                .IsNullOrEmptyOrWhiteSpace()
+            //                                                            ?
+            //                                                            xx.StoreProcedureAlias
+            //                                                            :
+            //                                                            xx.StoreProcedureName
+            //                                                        )
+            //                                                    , 
+            //                                                        Enum
+            //                                                            .Parse<HttpMethodsFlags>
+            //                                                                (
+            //                                                                    xx.AllowedHttpMethods
+            //                                                                    , true
+            //                                                                )
+            //                                                );
+            //                                            return rr;
+            //                                        }
+
+            //                                    )
+            //                                .GroupBy
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            return xx.StoreProcedureAlias;
+            //                                        }
+            //                                    )
+            //                                 .ToDictionary
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            return xx.Key;
+            //                                        }
+            //                                        ,
+            //                                        (xx) =>
+            //                                        {
+            //                                            xx.
+
+            //                                        }
+            //                                        StringComparer.OrdinalIgnoreCase
+            //                                    );
+
+
+
+                                        
+                                                
+            //                            return r;
+            //                        }
+            //                        ,
+            //                        StringComparer.OrdinalIgnoreCase
+            //                        //StringComparison.OrdinalIgnoreCase
+            //                    );
+
+
+
+            //var temp =   result   .ToDictionary
+            //                (
+            //                    (x) =>
+            //                    {
+            //                        var r = _configuration[$"{x.Key}ConnectionID"];
+            //                        return r;
+            //                    }
+            //                    , (x) =>
+            //                    {
+            //                        var allowExecuteWhiteList
+            //                            = _configuration
+            //                                .GetSection($"{x.Key}WhiteList")
+            //                                .AsEnumerable()
+            //                                .Where
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            var v = xx.Value;
+            //                                            var rr = !v.IsNullOrEmptyOrWhiteSpace();
+            //                                            return rr;
+            //                                        }
+            //                                    )
+            //                                .GroupBy
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            var key = xx.Key;
+            //                                            var i = key.FindIndex(":", 4);
+            //                                            var rr = key.Substring(0, i);
+            //                                            return rr;
+            //                                        }
+            //                                    )
+            //                                .ToDictionary
+            //                                    (
+            //                                        (xx) =>
+            //                                        {
+            //                                            var key = _configuration[$"{xx.Key}StoreProcedureAlias"];
+            //                                            var storeProcedureName = _configuration[$"{xx.Key}StoreProcedureName"];
+            //                                            if (key.IsNullOrEmptyOrWhiteSpace())
+            //                                            {
+            //                                                key = storeProcedureName;
+            //                                            }
+            //                                            return key;
+            //                                        }
+            //                                        ,
+            //                                        (xx) =>
+            //                                        {
+            //                                            var storeProcedureName = _configuration[$"{xx.Key}StoreProcedureName"];
+            //                                            var s = _configuration[$"{xx.Key}AllowedHttpMethods"];
+            //                                            var allowedHttpMethods =
+            //                                                        Enum
+            //                                                            .Parse<HttpMethodsFlags>
+            //                                                                (
+            //                                                                    s
+            //                                                                    , true
+            //                                                                );
+            //                                            var rr = new StoreProcedureInfo()
+            //                                            {
+            //                                                Alias = xx.Key
+            //                                                , Name = storeProcedureName
+            //                                                , AllowedHttpMethods = allowedHttpMethods
+            //                                            };
+            //                                            return
+            //                                                rr;
+            //                                        }
+            //                                        ,
+            //                                        StringComparer
+            //                                                .OrdinalIgnoreCase
+            //                                    );
+            //                        //var connectionTimeoutInSeconds = 120;
+            //                        //int.TryParse
+            //                        //        (
+            //                        //            configuration[$"{x.Key}ConnectionTimeoutInSeconds"]
+            //                        //            , out connectionTimeoutInSeconds
+            //                        //        );
+            //                        var r = new DataBaseConnectionInfo()
+            //                        {
+            //                            ConnectionID = _configuration[$"{x.Key}ConnectionID"]
+            //                            , ConnectionString = _configuration[$"{x.Key}ConnectionString"]
+            //                            //, ConnectionTimeoutInSeconds = _connectionTimeoutInSeconds
+            //                            , DataBaseType = Enum.Parse<DataBasesType>(_configuration[$"{x.Key}DataBaseType"], true)
+            //                            , AllowExecuteWhiteList = allowExecuteWhiteList
                                       
-                                    };
-                                    // cv = configuration[$"{x.Key}CachedParametersDefinitionExpiredInSeconds"];
-                                    //if (cv != null)
-                                    //{
-                                    //    r.CachedParametersDefinitionExpiredInSeconds = int.Parse(cv);
-                                    //}
-                                    //cv = configuration[$"{x.Key}NeedAutoRefreshExecutedTimeForSlideExpire"];
-                                    //if (cv != null)
-                                    //{
-                                    //    r.NeedAutoRefreshExecutedTimeForSlideExpire = bool.Parse(cv);
-                                    //}
-                                    return r;
-                                }
-                                , StringComparer
-                                        .OrdinalIgnoreCase
-                            );
-            return result;
+            //                        };
+            //                        // cv = configuration[$"{x.Key}CachedParametersDefinitionExpiredInSeconds"];
+            //                        //if (cv != null)
+            //                        //{
+            //                        //    r.CachedParametersDefinitionExpiredInSeconds = int.Parse(cv);
+            //                        //}
+            //                        //cv = configuration[$"{x.Key}NeedAutoRefreshExecutedTimeForSlideExpire"];
+            //                        //if (cv != null)
+            //                        //{
+            //                        //    r.NeedAutoRefreshExecutedTimeForSlideExpire = bool.Parse(cv);
+            //                        //}
+            //                        return r;
+            //                    }
+            //                    , StringComparer
+            //                            .OrdinalIgnoreCase
+            //                );
+            return
+                null;
+//                result;
         }
         protected virtual void LoadDataBasesConnectionsInfo
                                     (
-                                        string dbConnectionsJsonFile
-                                                    = "dbConnections.json"
+                                        
                                     )
         {
-            var connections = GetDataBasesConnectionsInfoProcess
-                                    (dbConnectionsJsonFile);
+            var connections = GetDataBasesConnectionsInfoProcess();
             _locker
                 .LockIf
                     (
@@ -229,16 +371,10 @@ namespace Microshaoft.Web
         }
         protected virtual string[] GetDynamicLoadExecutorsPathsProcess
                     (
-                        string dynamicLoadExecutorsPathsJsonFile
-                                    = "dynamicLoadExecutorsPaths.json"
                     )
         {
-            var configurationBuilder =
-                        new ConfigurationBuilder()
-                                .AddJsonFile(dynamicLoadExecutorsPathsJsonFile);
-            var configuration = configurationBuilder.Build();
             var result =
-                    configuration
+                    _configuration
                         .GetSection("DynamicLoadExecutorsPaths")
                         .AsEnumerable()
                         .Select
@@ -284,7 +420,7 @@ namespace Microshaoft.Web
             var executors =
                     GetDynamicLoadExecutorsPathsProcess
                             (
-                                dynamicLoadExecutorsPathsJsonFile
+                                //dynamicLoadExecutorsPathsJsonFile
                             )
                         .Select
                             (
@@ -403,9 +539,52 @@ namespace Microshaoft.Web
         private IDictionary<string, IStoreProcedureExecutable>
                     _indexedExecutors;
 
+        public
+            (int StatusCode, JToken Result)
+                        Process
+                            (
+                                string routeName //= "mssql"
+                                , JToken parameters = null
+                                , Func
+                                    <
+                                        IDataReader
+                                        , Type        // fieldType
+                                        , string    // fieldName
+                                        , int       // row index
+                                        , int       // column index
+                                        , JProperty   //  JObject Field 对象
+                                    > onReadRowColumnProcessFunc = null
+                                , string httpMethod = "Get"
+                                , int commandTimeoutInSeconds = 101
+                            )
+        {
+            var r = false;
+            JToken result = null;
+            r = TryGetStoreProcedureNameAndConnectionID
+                    (
+                        routeName
+                        , httpMethod
+                        , out var connectionID
+                        , out var storeProcedureName
+                    );
+            if (r)
+            {
 
+                Process
+                    (
+                        connectionID
+                        , storeProcedureName
+                        , parameters
+                        , onReadRowColumnProcessFunc
+                        , httpMethod
+                    );
 
-        public 
+            }
+
+            return (100, result);
+        }
+
+        private 
             (int StatusCode, JToken Result)
                         Process
                             (
@@ -425,6 +604,11 @@ namespace Microshaoft.Web
                                 , int commandTimeoutInSeconds = 101
                             )
         {
+
+
+
+
+
             var beginTime = DateTime.Now;
             JToken result = null;
             var r = false;
@@ -601,6 +785,82 @@ namespace Microshaoft.Web
                         );
             return r;
         }
+        public virtual bool TryGetStoreProcedureNameAndConnectionID
+                        (
+                            string routeName
+                            , string httpMethod
+                            , out string connectionID
+                            , out string storeProcedureName
+                        )
+        {
+            var r = false;
+            var configurationSection =
+                        _configuration
+                                    .GetSection("Routes")
+                                    .GetChildren()
+                                    .First
+                                        (
+                                            (x) =>
+                                            {
+                                                return
+                                                    (
+                                                        string
+                                                            .Compare
+                                                                (
+                                                                    x.Key
+                                                                    , routeName
+                                                                    , true
+                                                                )
+                                                        ==
+                                                        0
+                                                    );
+                                            }
+                                        )
+                                    //                                    .GetSection(routeName)
+                                    .GetChildren()
+                                    .First
+                                        (
+                                            (x) =>
+                                            {
+                                                if
+                                                    (
+                                                        !httpMethod
+                                                            .StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                                                    )
+                                                {
+                                                    httpMethod = "http" + httpMethod;
+                                                }
+
+                                                return
+                                                    (
+                                                        string
+                                                            .Compare
+                                                                (
+                                                                    x.Key
+                                                                    , httpMethod
+                                                                    , true
+                                                                )
+                                                        ==
+                                                        0
+                                                    );
+                                            }
+                                        );
+            connectionID = configurationSection
+                                    .GetValue<string>("ConnectionID");
+            r = !connectionID.IsNullOrEmptyOrWhiteSpace();
+            if (!r)
+            {
+                storeProcedureName = string.Empty;
+                return r;
+            }
+            storeProcedureName = configurationSection
+                                        .GetValue<string>("StoreProcedureName");
+            r = !storeProcedureName.IsNullOrEmptyOrWhiteSpace();
+            return r;
+        }
+
+
+
         private bool CheckList
                 (
                     IDictionary

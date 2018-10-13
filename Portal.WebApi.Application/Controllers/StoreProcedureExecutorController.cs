@@ -21,7 +21,7 @@ namespace Microshaoft.WebApi.Controllers
         {
         }
 
-        [BearerTokenBasedAuthorizeWebApiFilter]
+        //[BearerTokenBasedAuthorizeWebApiFilter]
         public override ActionResult<JToken> ProcessActionRequest
              (
                 //[FromRoute]
@@ -97,8 +97,8 @@ namespace Microshaoft.WebApi.Controllers
                     _service
                         .Process
                             (
-                                connectionID
-                                , storeProcedureName
+                                //connectionID
+                                storeProcedureName
                                 , jsonObject
                                 , (reader, fieldType, fieldName, rowIndex, columnIndex) =>
                                 {

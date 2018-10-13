@@ -132,19 +132,19 @@ namespace Microshaoft.Web
                         var diffNowSeconds = DateTimeHelper
                                                 .SecondsDiffNow(iat.Value);
                         ok =
-                                            (
-                                                (
-                                                    diffNowSeconds
-                                                    >=
-                                                    0
-                                                )
-                                                &&
-                                                (
-                                                    diffNowSeconds
-                                                    <=
-                                                    jwtExpireInSeconds
-                                                )
-                                            );
+                                (
+                                    (
+                                        diffNowSeconds
+                                        >=
+                                        0
+                                    )
+                                    &&
+                                    (
+                                        diffNowSeconds
+                                        <=
+                                        jwtExpireInSeconds
+                                    )
+                                );
                     }
                 }
                 if (ok)

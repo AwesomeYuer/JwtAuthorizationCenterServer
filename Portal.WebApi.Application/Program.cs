@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.FileProviders;
     using System;
     using System.IO;
     using System.Linq;
@@ -70,7 +71,24 @@
                                     , optional: false
                                     , reloadOnChange: true
                                 )
-                            .AddJsonFile("JwtValidation.json", false, true)
+                            .AddJsonFile
+                                (
+                                    path: "JwtValidation.json"
+                                    , optional: false
+                                    , reloadOnChange: true
+                                )
+                            .AddJsonFile
+                                (
+                                    path: "dbConnections.json"
+                                    , optional: false
+                                    , reloadOnChange: true
+                                )
+                            .AddJsonFile
+                                (
+                                    path: "dynamicLoadExecutorsPaths.json"
+                                    , optional: false
+                                    , reloadOnChange: true
+                                )
                             .Build();
             return
                 WebHost

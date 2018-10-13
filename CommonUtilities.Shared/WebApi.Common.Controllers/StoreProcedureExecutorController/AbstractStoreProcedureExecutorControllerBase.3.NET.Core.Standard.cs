@@ -71,8 +71,8 @@ namespace Microshaoft.WebApi.Controllers
             rr = _service
                         .Process
                             (
-                                connectionID
-                                , storeProcedureName
+                                //connectionID
+                                storeProcedureName
                                 , parameters
                                 , (reader, fieldType ,fieldName, columnIndex, rowIndex) =>
                                 {
