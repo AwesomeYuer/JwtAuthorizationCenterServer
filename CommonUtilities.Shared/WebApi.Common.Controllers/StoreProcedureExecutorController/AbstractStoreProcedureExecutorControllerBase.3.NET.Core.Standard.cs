@@ -34,8 +34,7 @@ namespace Microshaoft.WebApi.Controllers
         [
             Route
                 (
-                    "{connectionID:regex(^(?!test))?}/"
-                    + "{storeProcedureName}/"
+                    "{routeName}/"
                     + "{resultPathSegment1?}/"
                     + "{resultPathSegment2?}/"
                     + "{resultPathSegment3?}/"
@@ -47,9 +46,7 @@ namespace Microshaoft.WebApi.Controllers
         public virtual ActionResult<JToken> ProcessActionRequest
                             (
                                 [FromRoute]
-                                string connectionID //= "mssql"
-                                , [FromRoute]
-                                    string storeProcedureName
+                                    string routeName
                                 , [ModelBinder(typeof(JTokenModelBinder))]
                                     JToken parameters = null
                                 , [FromRoute]
@@ -67,31 +64,37 @@ namespace Microshaoft.WebApi.Controllers
                             )
         {
             JToken result = null;
-            (int StatusCode, JToken Result) rr;
-            rr = _service
-                        .Process
-                            (
-                                //connectionID
-                                storeProcedureName
-                                , parameters
-                                , (reader, fieldType ,fieldName, columnIndex, rowIndex) =>
-                                {
-                                    return null;
-                                }
-                                , Request.Method
-                                , 102
-                            );
-            result = rr
-                        .Result
-                        .GetDescendantByPath
-                            (
-                                resultPathSegment1
-                                , resultPathSegment2
-                                , resultPathSegment3
-                                , resultPathSegment4
-                                , resultPathSegment5
-                                , resultPathSegment6
-                            );
+            (int StatusCode, JToken Result) r =
+                _service
+                    .Process
+                        (
+                            routeName
+                            , parameters
+                            , (reader, fieldType ,fieldName, columnIndex, rowIndex) =>
+                            {
+                                return null;
+                            }
+                            , Request.Method
+                            , 102
+                        );
+            if (r.StatusCode == 200)
+            {
+                result = r
+                            .Result
+                            .GetDescendantByPath
+                                (
+                                    resultPathSegment1
+                                    , resultPathSegment2
+                                    , resultPathSegment3
+                                    , resultPathSegment4
+                                    , resultPathSegment5
+                                    , resultPathSegment6
+                                );
+            }
+            else
+            {
+                Response.StatusCode = r.StatusCode;
+            }
             return result;
         }
     }
