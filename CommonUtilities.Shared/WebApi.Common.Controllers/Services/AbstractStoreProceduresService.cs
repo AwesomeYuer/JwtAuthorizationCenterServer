@@ -236,7 +236,7 @@ namespace Microshaoft.Web
             var r = false;
             JToken result = null;
             var statusCode = 500;
-            var r1 = TryGetStoreProcedureNameAndConnection
+            var r1 = TryGetStoreProcedureInfo
                         (
                             routeName
                             , httpMethod
@@ -270,7 +270,8 @@ namespace Microshaoft.Web
                     , result
                 );
         }
-        private bool Process
+        protected virtual bool
+                Process
                         (
                             string connectionString
                             , string dataBaseType
@@ -323,7 +324,7 @@ namespace Microshaoft.Web
                 , string DataBaseType
                 , string StoreProcedureName
             )
-            TryGetStoreProcedureNameAndConnection
+            TryGetStoreProcedureInfo
                         (
                             string routeName
                             , string httpMethod
