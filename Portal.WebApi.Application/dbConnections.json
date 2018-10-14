@@ -4,7 +4,7 @@
   "Connections": {
     "c1": {
       "DataBaseType": "mssql",
-      "ConnectionString": "Initial Catalog=eip_portal;Data Source=localhost;User=sa;Password=!@#123QWE"
+      "ConnectionString": "Initial Catalog=test;Data Source=localhost;User=sa;Password=!@#123QWE"
     },
     "c2": {
       "DataBaseType": "mssql",
@@ -13,7 +13,11 @@
   },
   "Routes": {
     "objEcts": {
-      "HtTpAllMethods": {
+      "HttpGet": {
+        "ConnectionID": "c1",
+        "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get"
+      },
+      "HttpPost": {
         "ConnectionID": "c1",
         "StoreProcedureName": "zsp_zObjectsChangesLogsHistory_Get"
       }

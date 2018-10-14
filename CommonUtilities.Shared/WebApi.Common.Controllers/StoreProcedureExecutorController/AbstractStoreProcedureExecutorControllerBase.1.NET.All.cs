@@ -7,6 +7,7 @@ namespace Microshaoft.WebApi.Controllers
     using System.Linq;
     public enum DataBasesType
     {
+        UnKnown ,
         MsSQL ,
         MySQL ,
         NpgSQL ,
