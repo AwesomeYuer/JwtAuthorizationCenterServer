@@ -65,6 +65,12 @@ namespace Microshaoft.Web
         //for override from derived class
         public virtual void Initialize()
         {
+            _cachedParametersDefinitionExpiredInSeconds =
+                _configuration
+                        .GetValue<int>("CachedParametersDefinitionExpiredInSeconds");
+            _needAutoRefreshExecutedTimeForSlideExpire =
+                _configuration
+                        .GetValue<bool>("NeedAutoRefreshExecutedTimeForSlideExpire");
             LoadDynamicExecutors();
         }
         protected virtual string[] GetDynamicLoadExecutorsPathsProcess()

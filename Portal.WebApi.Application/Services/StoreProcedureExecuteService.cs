@@ -8,12 +8,5 @@
                     : base(configuration)
         {
         }
-
-        //called by base AbstractStoreProceduresService constructor
-        public override void Initialize()
-        {
-            base
-                .LoadDynamicExecutors();
-        }
     }
 }

@@ -1,6 +1,6 @@
 {
-  "CachedParametersDefinitionExpiredInSecondsz": 18640000,
-  "NeedAutoRefreshExecutedTimeForSlideExpirez": false,
+  "CachedParametersDefinitionExpiredInSeconds": 10,
+  "NeedAutoRefreshExecutedTimeForSlideExpire": false,
   "Connections": {
     "c1": {
       "DataBaseType": "mssql",
