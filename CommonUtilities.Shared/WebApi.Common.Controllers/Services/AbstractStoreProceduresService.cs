@@ -313,6 +313,21 @@ namespace Microshaoft.Web
                                 , commandTimeoutInSeconds
                             );
             }
+            if (!r)
+            {
+                result = null;
+                return r;
+            }
+            result["BeginTime"] = beginTime;
+            var endTime = DateTime.Now;
+            result["EndTime"] = endTime;
+            result["DurationInMilliseconds"]
+                    = DateTimeHelper
+                            .MillisecondsDiff
+                                    (
+                                        beginTime
+                                        , endTime
+                                    );
             return r;
         }
         
