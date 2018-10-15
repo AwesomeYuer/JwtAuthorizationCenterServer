@@ -21,12 +21,10 @@ namespace Microshaoft.WebApi.Controllers
         {
         }
 
-        //[BearerTokenBasedAuthorizeWebApiFilter]
-        public  ActionResult<JToken> ProcessActionRequest111
+        [BearerTokenBasedAuthorizeWebApiFilter]
+        public override ActionResult<JToken> ProcessActionRequest
              (
                 //[FromRoute]
-                //string connectionID //= "mssql"
-                //,// [FromRoute]
                     string routeName
                 , //[ModelBinder(typeof(JTokenModelBinder))]
                     JToken parameters = null
@@ -93,7 +91,6 @@ namespace Microshaoft.WebApi.Controllers
                     _service
                         .Process
                             (
-                                //connectionID
                                 routeName
                                 , jsonObject
                                 , (reader, fieldType, fieldName, rowIndex, columnIndex) =>
