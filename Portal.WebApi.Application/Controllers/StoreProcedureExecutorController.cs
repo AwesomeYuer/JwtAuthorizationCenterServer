@@ -124,7 +124,7 @@ namespace Microshaoft.WebApi.Controllers
                             (
                                 "Outputs"
                                 , "ResultSets"
-                                , "1"
+                                , "0"
                                 , "Rows"
                             );
             }
